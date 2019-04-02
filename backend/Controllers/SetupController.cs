@@ -17,10 +17,12 @@ namespace WebApi.Controllers
     {
 
         private IUserService _userService;
+        private IGroupService _groupService;
 
-        public SetupController(IUserService userService)
+        public SetupController(IUserService userService, IGroupService groupService)
         {
             _userService = userService;
+            _groupService = groupService;
         }
 
 
@@ -36,6 +38,10 @@ namespace WebApi.Controllers
             _userService.Create("user3", "user3");
             _userService.Create("user4", "user4");
             _userService.Create("user5", "user5");
+
+            _groupService.DeleteAll();
+            _groupService.Create("IFT585");
+            _groupService.Create("IFT606");
             return Ok();
         }
     }

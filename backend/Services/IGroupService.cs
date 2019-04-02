@@ -10,5 +10,6 @@ namespace WebApi.Services
 
         List<Group> GetAll();
         Group Create(string name);
+        void DeleteAll();
     }
 }

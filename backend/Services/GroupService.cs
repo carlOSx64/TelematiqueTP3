@@ -33,5 +33,12 @@ namespace WebApi.Services
 
             return newGroup;
         }
+
+        public void DeleteAll()
+        {
+            var allGroups = context.Set<Group>();
+            context.Groups.RemoveRange(allGroups);
+            context.SaveChanges();
+        }
     }
 }

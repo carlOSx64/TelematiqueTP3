@@ -16,9 +16,19 @@ namespace WebApi.Services
             this.context = sqliteContext;
         }
 
-        public List<Group> getAllGroups()
+        public List<Group> GetAll()
         {
             return this.context.Groups.ToList();
+        }
+
+        public Group Create(string name)
+        {
+            Group newGroup = new Group() { Name = name };
+
+            this.context.Groups.Add(newGroup);
+            this.context.SaveChanges();
+
+            return newGroup;
         }
     }
 }

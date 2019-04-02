@@ -25,9 +25,24 @@ namespace WebApi.Controllers
         [HttpGet]
         public ActionResult<string> GetAll()
         {
-            List<Group> groups = this.groupService.getAllGroups();
+            List<Group> groups = this.groupService.GetAll();
 
             return Ok(groups);
+        }
+
+        [AllowAnonymous]
+        [HttpPost]
+        public ActionResult<string> Create([FromForm]Group groupParam)
+        {
+            try
+            {
+                Group newGroup = this.groupService.Create(groupParam.Name);
+                return Ok(newGroup);
+            }
+            catch (Exception e)
+            {
+                return BadRequest(new { message = "Cannot create group" });
+            }
         }
     }
 }

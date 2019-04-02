@@ -29,7 +29,6 @@ namespace WebApi.Services
 
         public List<User> getAllUsers()
         {
-
             var users = context.Users
                 .ToList();
 
@@ -38,7 +37,7 @@ namespace WebApi.Services
 
         public void add(string username, string password)
         {
-            
+
             User user = new User()
             {
                 Username = username,
@@ -62,15 +61,18 @@ namespace WebApi.Services
         public User authenticate(string username, string password)
         {
 
-            try {
+            try
+            {
                 var user = context.Users
                     .Where(s => s.Username == username)
                     .Where(s => s.Password == password)
                     .FirstOrDefault();
-                    
+
                 user.Password = "";
                 return user;
-            } catch {
+            }
+            catch
+            {
                 return null;
             }
         }

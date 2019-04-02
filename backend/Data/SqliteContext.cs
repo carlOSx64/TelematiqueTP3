@@ -20,13 +20,23 @@ namespace WebApi.Data
         { }
 
         public DbSet<User> Users { get; set; }
-        public DbSet<Group> Groups{ get; set; }
+        public DbSet<Group> Groups { get; set; }
+        public DbSet<UserGroup> UserGroup { get; set; }
 
         protected override void OnModelCreating(ModelBuilder builder)
         {
             base.OnModelCreating(builder);
 
             builder.Entity<User>().Property(u => u.Username).IsRequired();
+
+            builder.Entity<UserGroup>()
+                .HasKey(ug => new { ug.UserId, ug.GroupId });
+            builder.Entity<UserGroup>().HasOne(ug => ug.User)
+                .WithMany(u => u.Groups)
+                .HasForeignKey(ug => ug.UserId);
+            builder.Entity<UserGroup>().HasOne(ug => ug.Group)
+                .WithMany(g => g.Members)
+                .HasForeignKey(ug => ug.GroupId);
         }
     }
 

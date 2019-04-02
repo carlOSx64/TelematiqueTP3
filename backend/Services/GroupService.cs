@@ -18,7 +18,10 @@ namespace WebApi.Services
 
         public List<Group> GetAll()
         {
-            return this.context.Groups.ToList();
+            var groups = context.Groups
+                .ToList();
+
+            return groups;
         }
 
         public Group Create(string name)

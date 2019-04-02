@@ -1,3 +1,5 @@
+using System.Collections.Generic;
+
 namespace WebApi.Models
 {
     public class User
@@ -6,5 +8,6 @@ namespace WebApi.Models
         public string Username { get; set; }
         public string Password { get; set; }
         public string ApiKey { get; set; }
+        public ICollection<UserGroup> Groups { get; set; }
     }
 }

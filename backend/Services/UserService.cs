@@ -27,7 +27,7 @@ namespace WebApi.Services
             .Select(s => s[random.Next(s.Length)]).ToArray());
         }
 
-        public List<User> getAllUsers()
+        public List<User> GetAll()
         {
             var users = context.Users
                 .ToList();
@@ -35,7 +35,15 @@ namespace WebApi.Services
             return users;
         }
 
-        public void add(string username, string password)
+        public List<Group> GetGroupsByUser(int userId)
+        {
+            var groups = context.Groups.Where(g => g.Members.Any(ug => ug.UserId == userId)).ToList();
+
+            return groups;
+        }
+
+
+        public void Create(string username, string password)
         {
 
             User user = new User()
@@ -50,7 +58,7 @@ namespace WebApi.Services
             context.SaveChanges();
         }
 
-        public void deleteAll()
+        public void DeleteAll()
         {
             // Truncate table users
             var allUsers = context.Set<User>();
@@ -58,7 +66,7 @@ namespace WebApi.Services
             context.SaveChanges();
         }
 
-        public User authenticate(string username, string password)
+        public User Authenticate(string username, string password)
         {
 
             try

@@ -28,12 +28,12 @@ namespace WebApi.Controllers
         [HttpPost("authenticate")]
         public ActionResult<string> Authenticate([FromForm]User userParam)
         {
-            User user = _userService.authenticate(userParam.Username, userParam.Password);
+            User user = _userService.Authenticate(userParam.Username, userParam.Password);
 
             if (user == null)
-              return BadRequest(new { message = "Username or password is incorrect" });
-           
-            
+                return BadRequest(new { message = "Username or password is incorrect" });
+
+
             return Ok(user);
         }
 
@@ -43,9 +43,26 @@ namespace WebApi.Controllers
         public ActionResult<string> GetAll()
         {
             // Users are hardcoded. We don't strip password / Api keys
-            List<User> users = _userService.getAllUsers();
+            List<User> users = _userService.GetAll();
 
             return Ok(users);
+        }
+
+        [AllowAnonymous]
+        [HttpGet]
+        [Route("{userId}/groups")]
+        public ActionResult<string> GetGroupsByUserId(int userId)
+        {
+            try
+            {
+
+                List<Group> groups = _userService.GetGroupsByUser(userId);
+                return Ok(groups);
+            }
+            catch
+            {
+                return BadRequest(new { message = "Could not get groups for userId: " + userId });
+            }
         }
     }
 }

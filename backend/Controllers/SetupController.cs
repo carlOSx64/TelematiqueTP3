@@ -30,12 +30,12 @@ namespace WebApi.Controllers
         public ActionResult<string> reset()
         {
             // Truncate table users
-            _userService.deleteAll();   
-            _userService.add("user1", "user1");
-            _userService.add("user2", "user2");
-            _userService.add("user3", "user3");
-            _userService.add("user4", "user4");
-            _userService.add("user5", "user5");
+            _userService.DeleteAll();   
+            _userService.Create("user1", "user1");
+            _userService.Create("user2", "user2");
+            _userService.Create("user3", "user3");
+            _userService.Create("user4", "user4");
+            _userService.Create("user5", "user5");
             return Ok();
         }
     }

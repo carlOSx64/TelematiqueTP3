@@ -39,7 +39,7 @@ namespace WebApi.Controllers
                 Group newGroup = this.groupService.Create(groupParam.Name);
                 return Ok(newGroup);
             }
-            catch (Exception e)
+            catch
             {
                 return BadRequest(new { message = "Cannot create group" });
             }

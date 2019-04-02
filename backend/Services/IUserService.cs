@@ -8,9 +8,10 @@ namespace WebApi.Services
     public interface IUserService
     {
 
-        List<User> getAllUsers();
-        void deleteAll();
-        void add(string username, string password);
-        User authenticate(string username, string password);
+        List<User> GetAll();
+        List<Group> GetGroupsByUser(int userId);
+        void DeleteAll();
+        void Create(string username, string password);
+        User Authenticate(string username, string password);
     }
 }

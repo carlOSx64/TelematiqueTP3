@@ -34,6 +34,7 @@ namespace backend
 
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_2);
             services.AddScoped<IUserService, UserService>();
+            services.AddScoped<IGroupService, GroupService>();
             services.AddDbContextPool<SqliteContext>(options => options.UseSqlite(configuration.GetConnectionString("DefaultConnection")));
         }
 

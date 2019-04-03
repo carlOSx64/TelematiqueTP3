@@ -42,8 +42,7 @@ namespace WebApi.Controllers
         [HttpGet]
         public ActionResult<string> GetAll()
         {
-            // Users are hardcoded. We don't strip password / Api keys
-            List<User> users = _userService.GetAll();
+            List<UserDto> users = _userService.GetAll().Select(u => this.ConvertUserToUserDto(u)).ToList();
 
             return Ok(users);
         }
@@ -56,13 +55,36 @@ namespace WebApi.Controllers
             try
             {
 
-                List<Group> groups = _userService.GetGroupsByUser(userId);
+                List<GroupDto> groups = _userService.GetGroupsByUser(userId).Select(g => this.ConverGroupToGroupDto(g)).ToList();
                 return Ok(groups);
             }
             catch
             {
                 return BadRequest(new { message = "Could not get groups for userId: " + userId });
             }
+        }
+
+        private UserDto ConvertUserToUserDto(User user)
+        {
+            UserDto userDto = new UserDto()
+            {
+                Id = user.Id,
+                Username = user.Username,
+                Groups= user.UserGroups.Select(ug => ug.GroupId).ToList()
+            };
+
+            return userDto;
+        }
+
+        private GroupDto ConverGroupToGroupDto(Group group)
+        {
+            GroupDto groupDto = new GroupDto()
+            {
+                Id = group.Id,
+                Name = group.Name
+            };
+
+            return groupDto;
         }
     }
 }

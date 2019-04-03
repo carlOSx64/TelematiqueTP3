@@ -4,10 +4,13 @@ namespace WebApi.Models
 {
     public class Group
     {
+        public Group()
+        {
+            this.UserGroups = new List<UserGroup>();
+        }
 
         public int Id { get; set; }
         public string Name { get; set; }
-        public ICollection<UserGroup> Members { get; set; }
-        //public List<User> Administrators { get; set; }
+        public ICollection<UserGroup> UserGroups { get; set; }
     }
 }

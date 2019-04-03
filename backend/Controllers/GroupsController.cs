@@ -25,9 +25,26 @@ namespace WebApi.Controllers
         [HttpGet]
         public ActionResult<string> GetAll()
         {
-            List<Group> groups = this.groupService.GetAll();
+            List<GroupDto> groups = this.groupService.GetAll().Select(g => this.ConvertGroupToGroupDto(g)).ToList();
 
             return Ok(groups);
+        }
+
+        [AllowAnonymous]
+        [HttpGet]
+        [Route("{groupId}/users")]
+        public ActionResult<string> GetUsersByGroupId(int groupId)
+        {
+            try
+            {
+
+                List<UserDto> groups = groupService.GetUsersByGroup(groupId).Select(g => this.ConvertUserToUserDto(g)).ToList();
+                return Ok(groups);
+            }
+            catch
+            {
+                return BadRequest(new { message = "Could not get users for groupId: " + groupId });
+            }
         }
 
         [AllowAnonymous]
@@ -43,6 +60,30 @@ namespace WebApi.Controllers
             {
                 return BadRequest(new { message = "Cannot create group" });
             }
+        }
+
+        private GroupDto ConvertGroupToGroupDto(Group group)
+        {
+            GroupDto groupDto = new GroupDto()
+            {
+                Id = group.Id,
+                Name = group.Name,
+                Members = group.UserGroups.Where(ug => !ug.IsAdmin).Select(ug => ug.UserId).ToList(),
+                Administrators = group.UserGroups.Where(ug => ug.IsAdmin).Select(ug => ug.UserId).ToList()
+            };
+
+            return groupDto;
+        }
+
+        private UserDto ConvertUserToUserDto(User user)
+        {
+            UserDto userDto = new UserDto()
+            {
+                Id = user.Id,
+                Username = user.Username
+            };
+
+            return userDto;
         }
     }
 }

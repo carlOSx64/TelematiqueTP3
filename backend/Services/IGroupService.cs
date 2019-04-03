@@ -9,6 +9,7 @@ namespace WebApi.Services
     {
 
         List<Group> GetAll();
+        List<User> GetUsersByGroup(int groupId);
         Group Create(string name);
         void DeleteAll();
     }

@@ -6,6 +6,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
 using WebApi.Models;
 using WebApi.Data;
+using Microsoft.EntityFrameworkCore;
 
 namespace WebApi.Services
 {
@@ -30,6 +31,7 @@ namespace WebApi.Services
         public List<User> GetAll()
         {
             var users = context.Users
+                .Include(u => u.UserGroups)
                 .ToList();
 
             return users;
@@ -37,7 +39,7 @@ namespace WebApi.Services
 
         public List<Group> GetGroupsByUser(int userId)
         {
-            var groups = context.Groups.Where(g => g.Members.Any(ug => ug.UserId == userId)).ToList();
+            var groups = context.Groups.Where(g => g.UserGroups.Any(ug => ug.UserId == userId)).ToList();
 
             return groups;
         }

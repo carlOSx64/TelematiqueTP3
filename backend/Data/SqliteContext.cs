@@ -32,10 +32,10 @@ namespace WebApi.Data
             builder.Entity<UserGroup>()
                 .HasKey(ug => new { ug.UserId, ug.GroupId });
             builder.Entity<UserGroup>().HasOne(ug => ug.User)
-                .WithMany(u => u.Groups)
+                .WithMany(u => u.UserGroups)
                 .HasForeignKey(ug => ug.UserId);
             builder.Entity<UserGroup>().HasOne(ug => ug.Group)
-                .WithMany(g => g.Members)
+                .WithMany(g => g.UserGroups)
                 .HasForeignKey(ug => ug.GroupId);
         }
     }

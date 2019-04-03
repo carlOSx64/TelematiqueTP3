@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Microsoft.EntityFrameworkCore;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -19,7 +20,15 @@ namespace WebApi.Services
         public List<Group> GetAll()
         {
             var groups = context.Groups
+                .Include(g => g.UserGroups)
                 .ToList();
+
+            return groups;
+        }
+
+        public List<User> GetUsersByGroup(int groupId)
+        {
+            var groups = context.Users.Where(u => u.UserGroups.Any(ug => ug.GroupId == groupId)).ToList();
 
             return groups;
         }

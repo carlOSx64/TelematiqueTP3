@@ -13,3 +13,5 @@ project.lock.json
 *.user
 *.userosscache
 *.sln.docstates
+
+frontend/ClientApp/.vs/

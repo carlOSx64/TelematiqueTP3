@@ -61,6 +61,17 @@ namespace WebApi.Services
             context.SaveChanges();
         }
 
+        public void RemoveUserFromGroup(int userId, int groupId)
+        {
+            UserGroup userGroup = context.UserGroup.Where(ug => ug.UserId == userId && ug.GroupId == groupId).First();
+            if (userGroup != null)
+            {
+                context.UserGroup.Remove(userGroup);
+                context.SaveChanges();
+            }
+        }
+
+
         public bool Exists(int groupId)
         {
             return context.Groups.Where(g => g.Id == groupId).Count() > 0;

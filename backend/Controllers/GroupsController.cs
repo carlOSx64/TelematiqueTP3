@@ -78,6 +78,8 @@ namespace WebApi.Controllers
                 return BadRequest(new { message = "Invalid user id" });
             }
 
+            // TODO: Check if user is not already in group
+
             try
             {
                 this.groupService.AddUserToGroup(userId, groupId, isAdminParam);
@@ -87,7 +89,33 @@ namespace WebApi.Controllers
             {
                 return BadRequest(new { message = "Could not add user " + userId + " to group " + groupId });
             }
+        }
 
+        [AllowAnonymous]
+        [HttpDelete("{groupId}/users/{userId}")]
+        public ActionResult<string> RemoveUser(int groupId, int userId)
+        {
+            if (!this.groupService.Exists(groupId))
+            {
+                return BadRequest(new { message = "Invalid group id" });
+            }
+
+            if (!this.userService.Exists(userId))
+            {
+                return BadRequest(new { message = "Invalid user id" });
+            }
+
+            // TODO: Check if user is in group
+
+            try
+            {
+                this.groupService.RemoveUserFromGroup(userId, groupId);
+                return Ok();
+            }
+            catch
+            {
+                return BadRequest(new { message = "Could not remove user " + userId + " from group " + groupId });
+            }
         }
 
         private GroupDto ConvertGroupToGroupDto(Group group)

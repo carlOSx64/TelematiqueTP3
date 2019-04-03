@@ -13,6 +13,7 @@ namespace WebApi.Services
         Group Create(string name);
         void DeleteAll();
         void AddUserToGroup(int userId, int groupId, bool isAdmin);
+        void RemoveUserFromGroup(int userId, int groupId);
         bool Exists(int groupId);
     }
 }

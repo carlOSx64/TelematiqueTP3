@@ -15,10 +15,12 @@ namespace WebApi.Controllers
     public class GroupsController : Controller
     {
         private IGroupService groupService;
+        private IUserService userService;
 
-        public GroupsController(IGroupService groupService)
+        public GroupsController(IGroupService groupService, IUserService userService)
         {
             this.groupService = groupService;
+            this.userService = userService;
         }
 
         [AllowAnonymous]
@@ -66,6 +68,16 @@ namespace WebApi.Controllers
         [HttpPost("{groupId}/users/{userId}")]
         public ActionResult<string> AddUser(int groupId, int userId, [FromForm]bool isAdminParam)
         {
+            if (!this.groupService.Exists(groupId))
+            {
+                return BadRequest(new { message = "Invalid group id" });
+            }
+
+            if (!this.userService.Exists(userId))
+            {
+                return BadRequest(new { message = "Invalid user id" });
+            }
+
             try
             {
                 this.groupService.AddUserToGroup(userId, groupId, isAdminParam);

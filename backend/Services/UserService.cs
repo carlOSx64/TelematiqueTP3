@@ -86,5 +86,11 @@ namespace WebApi.Services
                 return null;
             }
         }
+
+        public bool Exists(int userId)
+        {
+            return context.Users.Where(u => u.Id == userId).Count() > 0;
+        }
+
     }
 }

@@ -60,5 +60,10 @@ namespace WebApi.Services
             });
             context.SaveChanges();
         }
+
+        public bool Exists(int groupId)
+        {
+            return context.Groups.Where(g => g.Id == groupId).Count() > 0;
+        }
     }
 }

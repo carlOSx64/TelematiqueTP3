@@ -12,5 +12,6 @@ namespace WebApi.Services
         List<User> GetUsersByGroup(int groupId);
         Group Create(string name);
         void DeleteAll();
+        void AddUserToGroup(int userId, int groupId, bool isAdmin);
     }
 }

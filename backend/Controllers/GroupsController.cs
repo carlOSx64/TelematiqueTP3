@@ -62,6 +62,22 @@ namespace WebApi.Controllers
             }
         }
 
+        [AllowAnonymous]
+        [HttpPost("{groupId}/users/{userId}")]
+        public ActionResult<string> AddUser(int groupId, int userId, [FromForm]bool isAdminParam)
+        {
+            try
+            {
+                this.groupService.AddUserToGroup(userId, groupId, isAdminParam);
+                return Ok();
+            }
+            catch
+            {
+                return BadRequest(new { message = "Could not add user " + userId + " to group " + groupId });
+            }
+
+        }
+
         private GroupDto ConvertGroupToGroupDto(Group group)
         {
             GroupDto groupDto = new GroupDto()

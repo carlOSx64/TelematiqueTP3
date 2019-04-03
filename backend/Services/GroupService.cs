@@ -49,5 +49,16 @@ namespace WebApi.Services
             context.Groups.RemoveRange(allGroups);
             context.SaveChanges();
         }
+
+        public void AddUserToGroup(int userId, int groupId, bool isAdmin)
+        {
+            context.UserGroup.Add(new UserGroup()
+            {
+                UserId = userId,
+                GroupId = groupId,
+                IsAdmin = isAdmin
+            });
+            context.SaveChanges();
+        }
     }
 }

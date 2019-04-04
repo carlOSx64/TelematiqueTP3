@@ -1,3 +1,4 @@
+using System;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Authorization;
 using WebApi.Models;
@@ -31,8 +32,9 @@ namespace WebApi.Controllers
         [HttpGet("reset")]
         public ActionResult<string> reset()
         {
+            Console.WriteLine("haha");
             // Truncate table users
-            _userService.DeleteAll();   
+            _userService.DeleteAll();
             _userService.Create("user1", "user1");
             _userService.Create("user2", "user2");
             _userService.Create("user3", "user3");

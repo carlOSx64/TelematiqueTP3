@@ -20,14 +20,17 @@ namespace WebApi.Data
         { }
 
         public DbSet<User> Users { get; set; }
+        public DbSet<File> Files { get; set; }
         public DbSet<Group> Groups { get; set; }
         public DbSet<UserGroup> UserGroup { get; set; }
 
         protected override void OnModelCreating(ModelBuilder builder)
         {
             base.OnModelCreating(builder);
+            Console.WriteLine("hihi");
 
             builder.Entity<User>().Property(u => u.Username).IsRequired();
+            builder.Entity<File>().Property(f => f.Name).IsRequired();
 
             builder.Entity<UserGroup>()
                 .HasKey(ug => new { ug.UserId, ug.GroupId });
@@ -37,6 +40,7 @@ namespace WebApi.Data
             builder.Entity<UserGroup>().HasOne(ug => ug.Group)
                 .WithMany(g => g.UserGroups)
                 .HasForeignKey(ug => ug.GroupId);
+            Console.WriteLine("Done");
         }
     }
 

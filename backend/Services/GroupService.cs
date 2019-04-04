@@ -68,6 +68,22 @@ namespace WebApi.Services
             {
                 context.UserGroup.Remove(userGroup);
                 context.SaveChanges();
+            } else
+            {
+                throw new Exception("User is not member of this group");
+            }
+        }
+
+        public void EditUserPermissions(int userId, int groupId, bool isAdmin)
+        {
+            UserGroup currentUserGroup = context.UserGroup.First(ug => ug.UserId == userId && ug.GroupId == groupId);
+            if (currentUserGroup != null)
+            {
+                currentUserGroup.IsAdmin = isAdmin;
+                context.SaveChanges();
+            } else
+            {
+                throw new Exception("User is not member of this group");
             }
         }
 

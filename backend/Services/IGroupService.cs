@@ -14,6 +14,7 @@ namespace WebApi.Services
         void DeleteAll();
         void AddUserToGroup(int userId, int groupId, bool isAdmin);
         void RemoveUserFromGroup(int userId, int groupId);
+        void EditUserPermissions(int userId, int groupId, bool isAdmin);
         bool Exists(int groupId);
     }
 }

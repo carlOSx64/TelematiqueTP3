@@ -51,11 +51,11 @@ namespace WebApi.Controllers
 
         [AllowAnonymous]
         [HttpPost]
-        public ActionResult<string> Create([FromForm]Group groupParam)
+        public ActionResult<string> Create([FromForm]Group group)
         {
             try
             {
-                Group newGroup = this.groupService.Create(groupParam.Name);
+                Group newGroup = this.groupService.Create(group.Name);
                 return Ok(newGroup);
             }
             catch
@@ -66,7 +66,7 @@ namespace WebApi.Controllers
 
         [AllowAnonymous]
         [HttpPost("{groupId}/users/{userId}")]
-        public ActionResult<string> AddUser(int groupId, int userId, [FromForm]bool isAdminParam)
+        public ActionResult<string> AddUser(int groupId, int userId, [FromForm]bool isAdmin)
         {
             if (!this.groupService.Exists(groupId))
             {
@@ -78,11 +78,9 @@ namespace WebApi.Controllers
                 return BadRequest(new { message = "Invalid user id" });
             }
 
-            // TODO: Check if user is not already in group
-
             try
             {
-                this.groupService.AddUserToGroup(userId, groupId, isAdminParam);
+                this.groupService.AddUserToGroup(userId, groupId, isAdmin);
                 return Ok();
             }
             catch
@@ -105,8 +103,6 @@ namespace WebApi.Controllers
                 return BadRequest(new { message = "Invalid user id" });
             }
 
-            // TODO: Check if user is in group
-
             try
             {
                 this.groupService.RemoveUserFromGroup(userId, groupId);
@@ -115,6 +111,31 @@ namespace WebApi.Controllers
             catch
             {
                 return BadRequest(new { message = "Could not remove user " + userId + " from group " + groupId });
+            }
+        }
+
+        [AllowAnonymous]
+        [HttpPut("{groupId}/users/{userId}")]
+        public ActionResult<string> EditUser(int groupId, int userId, [FromForm]bool isAdmin)
+        {
+            if (!this.groupService.Exists(groupId))
+            {
+                return BadRequest(new { message = "Invalid group id" });
+            }
+
+            if (!this.userService.Exists(userId))
+            {
+                return BadRequest(new { message = "Invalid user id" });
+            }
+
+            try
+            {
+                this.groupService.EditUserPermissions(userId, groupId, isAdmin);
+                return Ok();
+            }
+            catch
+            {
+                return BadRequest(new { message = "Could not edit user " + userId + " from group " + groupId });
             }
         }
 

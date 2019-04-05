@@ -44,6 +44,12 @@ namespace WebApi.Services
             return groups;
         }
 
+        public List<Invitation> GetInvitationsByUser(int userId)
+        {
+            var invitations = context.Invitations.Where(i => i.UserId == userId).ToList();
+
+            return invitations;
+        }
 
         public void Create(string username, string password)
         {
@@ -90,7 +96,6 @@ namespace WebApi.Services
         public bool Exists(int userId)
         {
             return context.Users.Where(u => u.Id == userId).Count() > 0;
-        }
-
+        }        
     }
 }

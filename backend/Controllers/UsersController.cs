@@ -54,7 +54,6 @@ namespace WebApi.Controllers
         {
             try
             {
-
                 List<GroupDto> groups = _userService.GetGroupsByUser(userId).Select(g => this.ConverGroupToGroupDto(g)).ToList();
                 return Ok(groups);
             }
@@ -64,13 +63,29 @@ namespace WebApi.Controllers
             }
         }
 
+        [AllowAnonymous]
+        [HttpGet]
+        [Route("{userId}/invitations")]
+        public ActionResult<string> GetInvitationsByUserId(int userId)
+        {
+            try
+            {
+                List<InvitationDto> invitations = _userService.GetInvitationsByUser(userId).Select(i => this.ConvertInvitationToInvitationDto(i)).ToList();
+                return Ok(invitations);
+            }
+            catch
+            {
+                return BadRequest(new { message = "Could not get invitations for userId: " + userId });
+            }
+        }
+
         private UserDto ConvertUserToUserDto(User user)
         {
             UserDto userDto = new UserDto()
             {
                 Id = user.Id,
                 Username = user.Username,
-                Groups= user.UserGroups.Select(ug => ug.GroupId).ToList()
+                Groups = user.UserGroups.Select(ug => ug.GroupId).ToList()
             };
 
             return userDto;
@@ -85,6 +100,20 @@ namespace WebApi.Controllers
             };
 
             return groupDto;
+        }
+
+        private InvitationDto ConvertInvitationToInvitationDto(Invitation invitation)
+        {
+            InvitationDto invitationDto = new InvitationDto()
+            {
+                UserId = invitation.UserId,
+                GroupId = invitation.GroupId,
+                IsAdmin = invitation.IsAdmin,
+                Status = invitation.Status,
+                InvitedById = invitation.InvitedById
+            };
+
+            return invitationDto;
         }
     }
 }

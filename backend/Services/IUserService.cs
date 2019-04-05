@@ -10,6 +10,7 @@ namespace WebApi.Services
 
         List<User> GetAll();
         List<Group> GetGroupsByUser(int userId);
+        List<Invitation> GetInvitationsByUser(int userId);
         void DeleteAll();
         void Create(string username, string password);
         User Authenticate(string username, string password);

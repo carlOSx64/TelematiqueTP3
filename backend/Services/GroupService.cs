@@ -68,7 +68,8 @@ namespace WebApi.Services
             {
                 context.UserGroup.Remove(userGroup);
                 context.SaveChanges();
-            } else
+            }
+            else
             {
                 throw new Exception("User is not member of this group");
             }
@@ -81,7 +82,8 @@ namespace WebApi.Services
             {
                 currentUserGroup.IsAdmin = isAdmin;
                 context.SaveChanges();
-            } else
+            }
+            else
             {
                 throw new Exception("User is not member of this group");
             }

@@ -10,7 +10,7 @@ namespace WebApi.Models
         public int UserId { get; set; }
         public int GroupId { get; set; }
         public bool IsAdmin { get; set; }
-        public bool IsPending { get; set; }
+        public InvitationStatus Status { get; set; }
         public int InvitedById { get; set; }
     }
 }

@@ -92,5 +92,18 @@ namespace WebApi.Services
         {
             return context.Groups.Where(g => g.Id == groupId).Count() > 0;
         }
+
+        public void InviteUser(int userId, int groupId, bool isAdmin, int invitedBy)
+        {
+            context.Invitations.Add(new Invitation()
+            {
+                UserId = userId,
+                GroupId = groupId,
+                IsAdmin = isAdmin,
+                IsPending = true,
+                InvitedById = invitedBy
+            });
+            context.SaveChanges();
+        }
     }
 }

@@ -23,6 +23,7 @@ namespace WebApi.Data
         public DbSet<File> Files { get; set; }
         public DbSet<Group> Groups { get; set; }
         public DbSet<UserGroup> UserGroup { get; set; }
+        public DbSet<Invitation> Invitations { get; set; }
 
         protected override void OnModelCreating(ModelBuilder builder)
         {
@@ -30,6 +31,7 @@ namespace WebApi.Data
             Console.WriteLine("hihi");
 
             builder.Entity<User>().Property(u => u.Username).IsRequired();
+            builder.Entity<Group>().Property(g => g.Name).IsRequired();
             builder.Entity<File>().Property(f => f.Name).IsRequired();
 
             builder.Entity<UserGroup>()
@@ -40,6 +42,22 @@ namespace WebApi.Data
             builder.Entity<UserGroup>().HasOne(ug => ug.Group)
                 .WithMany(g => g.UserGroups)
                 .HasForeignKey(ug => ug.GroupId);
+
+            builder.Entity<Invitation>()
+                .HasKey(i => new { i.UserId, i.GroupId });
+            builder.Entity<Invitation>()
+                .HasOne(i => i.User)
+                .WithMany(u => u.Invitations)
+                .HasForeignKey(i => i.UserId);
+            builder.Entity<Invitation>()
+                .HasOne(i => i.Group)
+                .WithMany()
+                .HasForeignKey(i => i.GroupId);
+            builder.Entity<Invitation>()
+                .HasOne(i => i.InvitedBy)
+                .WithMany()
+                .HasForeignKey(i => i.InvitedById);
+
             Console.WriteLine("Done");
         }
     }

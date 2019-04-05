@@ -139,6 +139,31 @@ namespace WebApi.Controllers
             }
         }
 
+        [AllowAnonymous]
+        [HttpPost("{groupId}/invitations/{userId}")]
+        public ActionResult<string> InviteUser(int groupId, int userId, [FromForm]bool isAdmin)
+        {
+            if (!this.groupService.Exists(groupId))
+            {
+                return BadRequest(new { message = "Invalid group id" });
+            }
+
+            if (!this.userService.Exists(userId))
+            {
+                return BadRequest(new { message = "Invalid user id" });
+            }
+
+            try
+            {
+                this.groupService.InviteUser(userId, groupId, isAdmin, 1); // TODO: Add current user id
+                return Ok();
+            }
+            catch
+            {
+                return BadRequest(new { message = "Could not add user " + userId + " to group " + groupId });
+            }
+        }
+
         private GroupDto ConvertGroupToGroupDto(Group group)
         {
             GroupDto groupDto = new GroupDto()

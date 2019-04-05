@@ -19,19 +19,26 @@ namespace backend
     {
         public static void Main(string[] args)
         {
-            // Configuration
-            var builder = new ConfigurationBuilder()
+            try
+            {
+                // Configuration
+                var builder = new ConfigurationBuilder()
                 .AddJsonFile("appsettings.json", optional: false, reloadOnChange: true);
-            var configuration = builder.Build();
+                var configuration = builder.Build();
 
-            // Database
-            var optionsBuilder = new DbContextOptionsBuilder<SqliteContext>()
-                .UseSqlite(configuration.GetConnectionString("DefaultConnection"));
-            var context = new SqliteContext(optionsBuilder.Options);
-            context.Database.EnsureCreated();
+                // Database
+                var optionsBuilder = new DbContextOptionsBuilder<SqliteContext>()
+                                .UseSqlite(configuration.GetConnectionString("DefaultConnection"));
+                var context = new SqliteContext(optionsBuilder.Options);
+                context.Database.EnsureCreated();
 
-            // Web Server
-            CreateWebHostBuilder(args).Build().Run();
+                // Web Server
+                CreateWebHostBuilder(args).Build().Run();
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex);
+            }
         }
 
         public static IWebHostBuilder CreateWebHostBuilder(string[] args) =>

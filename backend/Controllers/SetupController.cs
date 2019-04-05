@@ -44,6 +44,12 @@ namespace WebApi.Controllers
             _groupService.DeleteAll();
             _groupService.Create("IFT585");
             _groupService.Create("IFT606");
+
+            _groupService.AddUserToGroup(1, 1, true);
+            _groupService.AddUserToGroup(2, 1, false);
+            _groupService.InviteUser(3, 1, false, 1);
+            _groupService.UpdateInvitation(3, 1, InvitationStatus.Rejected);
+            _groupService.InviteUser(4, 1, false, 1);
             return Ok();
         }
     }

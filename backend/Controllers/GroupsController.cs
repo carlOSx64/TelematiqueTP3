@@ -81,7 +81,7 @@ namespace WebApi.Controllers
             try
             {
                 this.groupService.AddUserToGroup(userId, groupId, isAdmin);
-                return Ok();
+                return Ok(new { message = "User added to group" });
             }
             catch
             {
@@ -106,7 +106,7 @@ namespace WebApi.Controllers
             try
             {
                 this.groupService.RemoveUserFromGroup(userId, groupId);
-                return Ok();
+                return Ok(new { message = "User removed from group" });
             }
             catch
             {
@@ -131,7 +131,7 @@ namespace WebApi.Controllers
             try
             {
                 this.groupService.EditUserPermissions(userId, groupId, isAdmin);
-                return Ok();
+                return Ok(new { message = "User permissions updated" });
             }
             catch
             {
@@ -156,7 +156,7 @@ namespace WebApi.Controllers
             try
             {
                 this.groupService.InviteUser(userId, groupId, isAdmin, 1); // TODO: Add current user id
-                return Ok();
+                return Ok(new { message = "User invited" });
             }
             catch
             {

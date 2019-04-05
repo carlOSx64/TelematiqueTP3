@@ -164,6 +164,31 @@ namespace WebApi.Controllers
             }
         }
 
+        [AllowAnonymous]
+        [HttpPut("{groupId}/invitations/{userId}")]
+        public ActionResult<string> UpdateInvitation(int groupId, int userId, [FromForm] InvitationStatus status)
+        {
+            if (!this.groupService.Exists(groupId))
+            {
+                return BadRequest(new { message = "Invalid group id" });
+            }
+
+            if (!this.userService.Exists(userId))
+            {
+                return BadRequest(new { message = "Invalid user id" });
+            }
+
+            try
+            {
+                this.groupService.UpdateInvitation(userId, groupId, status);
+                return Ok(new { message = "Invitation updated" });
+            }
+            catch
+            {
+                return BadRequest(new { message = "Could not add user " + userId + " to group " + groupId });
+            }
+        }
+
         private GroupDto ConvertGroupToGroupDto(Group group)
         {
             GroupDto groupDto = new GroupDto()

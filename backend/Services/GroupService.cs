@@ -100,10 +100,24 @@ namespace WebApi.Services
                 UserId = userId,
                 GroupId = groupId,
                 IsAdmin = isAdmin,
-                IsPending = true,
+                Status = InvitationStatus.Pending,
                 InvitedById = invitedBy
             });
             context.SaveChanges();
+        }
+
+        public void UpdateInvitation(int userId, int groupId, InvitationStatus status)
+        {
+            Invitation currentInvitation = context.Invitations.First(i => i.UserId == userId && i.GroupId == groupId);
+            if (currentInvitation != null)
+            {
+                currentInvitation.Status = status;
+                context.SaveChanges();
+            }
+            else
+            {
+                throw new Exception("User is not member of this group");
+            }
         }
     }
 }

@@ -84,13 +84,21 @@ namespace WebApi.Services
                     .Where(s => s.Password == password)
                     .FirstOrDefault();
 
-                user.Password = "";
                 return user;
             }
             catch
             {
                 return null;
             }
+        }
+
+        public User GetUserByApiKey(string apiKey)
+        {
+            var user = context.Users
+                .Where(s => s.ApiKey == apiKey)
+                .FirstOrDefault();
+
+            return user;
         }
 
         public bool Exists(int userId)

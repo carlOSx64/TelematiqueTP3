@@ -1,8 +1,8 @@
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Authorization;
 using Microsoft.Extensions.Options;
-using WebApi.Models;
 using WebApi.Data;
+using WebApi.Helpers;
+using WebApi.Models;
 using WebApi.Services;
 using System.Threading.Tasks;
 using System.Collections.Generic;
@@ -10,21 +10,22 @@ using System.Linq;
 
 namespace WebApi.Controllers
 {
-    [Authorize]
     [ApiController]
     [Route("api/[controller]")]
     public class UsersController : Controller
     {
 
         private IUserService _userService;
+        private IConnectedUserService _connectedUserService;
 
-        public UsersController(IUserService userService)
+        public UsersController(IUserService userService, IConnectedUserService connectedUserService)
         {
             _userService = userService;
+            _connectedUserService = connectedUserService;
         }
 
         // POST api/users/authenticate
-        [AllowAnonymous]
+        // Anonymous
         [HttpPost("authenticate")]
         public ActionResult<string> Authenticate([FromForm]User userParam)
         {
@@ -33,28 +34,49 @@ namespace WebApi.Controllers
             if (user == null)
                 return BadRequest(new { message = "Username or password is incorrect" });
 
+            // TODO : Validate it works
+            var ip = HttpContext.Connection.RemoteIpAddress.ToString();
+            _connectedUserService.Connect(user.Id, ip);
 
-            return Ok(user);
+            return Ok(new { id = user.Id, username = user.Username, apiKey = user.ApiKey});
+        }
+
+        // GET api/users/logout
+        // Authenticated
+        [HttpGet("logout")]
+        public ActionResult<string> Logout([FromQuery]string apiKey)
+        {
+            if (!UserHelper.ValidateApiKey(apiKey, _userService)) {
+                return BadRequest(new { message = "Invalid API key"});
+            }
+
+            var userId = UserHelper.GetUserByApiKey(apiKey, _userService);
+
+            // Logout
+            _connectedUserService.Logout(userId);
+
+            return Ok();
         }
 
         // GET api/users
-        [AllowAnonymous]
+        // Anonymous
         [HttpGet]
         public ActionResult<string> GetAll()
         {
-            List<UserDto> users = _userService.GetAll().Select(u => this.ConvertUserToUserDto(u)).ToList();
+            List<UserDto> users = _userService.GetAll().Select(u => UserHelper.ConvertUserToUserDto(u)).ToList();
 
             return Ok(users);
         }
 
-        [AllowAnonymous]
+        // GET api/users/:id/groups
+        // Anonymous
         [HttpGet]
         [Route("{userId}/groups")]
         public ActionResult<string> GetGroupsByUserId(int userId)
         {
             try
             {
-                List<GroupDto> groups = _userService.GetGroupsByUser(userId).Select(g => this.ConverGroupToGroupDto(g)).ToList();
+                List<GroupDto> groups = _userService.GetGroupsByUser(userId).Select(g => UserHelper.ConvertGroupToGroupDto(g)).ToList();
                 return Ok(groups);
             }
             catch
@@ -63,57 +85,21 @@ namespace WebApi.Controllers
             }
         }
 
-        [AllowAnonymous]
+        // GET api/users/:id/invitations 
+        // Anonymous
         [HttpGet]
         [Route("{userId}/invitations")]
         public ActionResult<string> GetInvitationsByUserId(int userId)
         {
             try
             {
-                List<InvitationDto> invitations = _userService.GetInvitationsByUser(userId).Select(i => this.ConvertInvitationToInvitationDto(i)).ToList();
+                List<InvitationDto> invitations = _userService.GetInvitationsByUser(userId).Select(i => UserHelper.ConvertInvitationToInvitationDto(i)).ToList();
                 return Ok(invitations);
             }
             catch
             {
                 return BadRequest(new { message = "Could not get invitations for userId: " + userId });
             }
-        }
-
-        private UserDto ConvertUserToUserDto(User user)
-        {
-            UserDto userDto = new UserDto()
-            {
-                Id = user.Id,
-                Username = user.Username,
-                Groups = user.UserGroups.Select(ug => ug.GroupId).ToList()
-            };
-
-            return userDto;
-        }
-
-        private GroupDto ConverGroupToGroupDto(Group group)
-        {
-            GroupDto groupDto = new GroupDto()
-            {
-                Id = group.Id,
-                Name = group.Name
-            };
-
-            return groupDto;
-        }
-
-        private InvitationDto ConvertInvitationToInvitationDto(Invitation invitation)
-        {
-            InvitationDto invitationDto = new InvitationDto()
-            {
-                UserId = invitation.UserId,
-                GroupId = invitation.GroupId,
-                IsAdmin = invitation.IsAdmin,
-                Status = invitation.Status,
-                InvitedById = invitation.InvitedById
-            };
-
-            return invitationDto;
         }
     }
 }

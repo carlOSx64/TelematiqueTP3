@@ -1,15 +1,14 @@
-﻿using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using WebApi.Models;
 using WebApi.Services;
+using WebApi.Helpers;
 
 namespace WebApi.Controllers
 {
-    [Authorize]
     [ApiController]
     [Route("api/[controller]")]
     public class GroupsController : Controller
@@ -23,7 +22,8 @@ namespace WebApi.Controllers
             this.userService = userService;
         }
 
-        [AllowAnonymous]
+        // GET api/groups
+        // Anonymous
         [HttpGet]
         public ActionResult<string> GetAll()
         {
@@ -32,7 +32,8 @@ namespace WebApi.Controllers
             return Ok(groups);
         }
 
-        [AllowAnonymous]
+        // GET api/groups/:id/users
+        // Anonymous
         [HttpGet]
         [Route("{groupId}/users")]
         public ActionResult<string> GetUsersByGroupId(int groupId)
@@ -49,7 +50,9 @@ namespace WebApi.Controllers
             }
         }
 
-        [AllowAnonymous]
+
+        // POST api/groups
+        // Anonymous
         [HttpPost]
         public ActionResult<string> Create([FromForm]Group group)
         {
@@ -64,7 +67,8 @@ namespace WebApi.Controllers
             }
         }
 
-        [AllowAnonymous]
+        // POST api/groups/:groupId/users/:userId
+        // Anonymous
         [HttpPost("{groupId}/users/{userId}")]
         public ActionResult<string> AddUser(int groupId, int userId, [FromForm]bool isAdmin)
         {
@@ -89,7 +93,8 @@ namespace WebApi.Controllers
             }
         }
 
-        [AllowAnonymous]
+        // DELETE api/groups/:groupId/users/:userId
+        // Anonymous
         [HttpDelete("{groupId}/users/{userId}")]
         public ActionResult<string> RemoveUser(int groupId, int userId)
         {
@@ -114,7 +119,8 @@ namespace WebApi.Controllers
             }
         }
 
-        [AllowAnonymous]
+        // PUT api/groups/:groupId/users/:userId
+        // Anonymous
         [HttpPut("{groupId}/users/{userId}")]
         public ActionResult<string> EditUser(int groupId, int userId, [FromForm]bool isAdmin)
         {
@@ -139,7 +145,8 @@ namespace WebApi.Controllers
             }
         }
 
-        [AllowAnonymous]
+        // POST api/groups/:groupId/invitations/:userId
+        // Anonymous
         [HttpPost("{groupId}/invitations/{userId}")]
         public ActionResult<string> InviteUser(int groupId, int userId, [FromForm]bool isAdmin)
         {
@@ -164,7 +171,9 @@ namespace WebApi.Controllers
             }
         }
 
-        [AllowAnonymous]
+
+        // PUT api/groups/:groupId/invitations/:userId
+        // Anonymous
         [HttpPut("{groupId}/invitations/{userId}")]
         public ActionResult<string> UpdateInvitation(int groupId, int userId, [FromForm] InvitationStatus status)
         {

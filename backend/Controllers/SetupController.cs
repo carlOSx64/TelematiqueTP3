@@ -1,6 +1,5 @@
 using System;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Authorization;
 using WebApi.Models;
 using WebApi.Data;
 using WebApi.Services;
@@ -11,7 +10,6 @@ using Microsoft.Extensions.Options;
 
 namespace WebApi.Controllers
 {
-    [Authorize]
     [ApiController]
     [Route("api/[controller]")]
     public class SetupController : ControllerBase
@@ -19,32 +17,39 @@ namespace WebApi.Controllers
 
         private IUserService _userService;
         private IGroupService _groupService;
+        private IConnectedUserService _connectedUserService;
 
-        public SetupController(IUserService userService, IGroupService groupService)
+        public SetupController(IUserService userService, IGroupService groupService, IConnectedUserService connectedUserService)
         {
             _userService = userService;
             _groupService = groupService;
+            _connectedUserService = connectedUserService;
         }
 
 
         // GET api/setup/reset
-        [AllowAnonymous]
+        // Anonymous
         [HttpGet("reset")]
         public ActionResult<string> reset()
         {
-            Console.WriteLine("haha");
-            // Truncate table users
+            // Truncate tables users, group, connectedUser
+            _connectedUserService.DeleteAll();
+            _groupService.DeleteAll();
             _userService.DeleteAll();
+
             _userService.Create("user1", "user1");
             _userService.Create("user2", "user2");
             _userService.Create("user3", "user3");
             _userService.Create("user4", "user4");
             _userService.Create("user5", "user5");
 
-            _groupService.DeleteAll();
             _groupService.Create("IFT585");
             _groupService.Create("IFT606");
 
+
+            // TODO : Reset la séquence pour les IDs de toutes les tables, sinon ça crash
+            // Un truc du genre normalement en SQLite
+            // UPDATE SQLITE_SEQUENCE SET SEQ=0 WHERE NAME='Users';
             _groupService.AddUserToGroup(1, 1, true);
             _groupService.AddUserToGroup(2, 1, false);
             _groupService.InviteUser(3, 1, false, 1);

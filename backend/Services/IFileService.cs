@@ -8,5 +8,6 @@ namespace WebApi.Services
     public interface IFileService
     {
         File Create(string name, string content);
+        void Delete(string id);
     }
 }

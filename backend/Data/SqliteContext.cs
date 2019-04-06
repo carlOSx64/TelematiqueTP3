@@ -28,7 +28,6 @@ namespace WebApi.Data
         protected override void OnModelCreating(ModelBuilder builder)
         {
             base.OnModelCreating(builder);
-            Console.WriteLine("hihi");
 
             builder.Entity<User>().Property(u => u.Username).IsRequired();
             builder.Entity<Group>().Property(g => g.Name).IsRequired();
@@ -58,7 +57,6 @@ namespace WebApi.Data
                 .WithMany()
                 .HasForeignKey(i => i.InvitedById);
 
-            Console.WriteLine("Done");
         }
     }
 

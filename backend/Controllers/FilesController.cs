@@ -29,10 +29,19 @@ namespace WebApi.Controllers
         [HttpPost]
         public ActionResult<string> Create([FromForm]File fileParam)
         {
-            Console.WriteLine("Ahah" + fileParam.ToString());
             File newFile = this.fileService.Create(fileParam.Name, fileParam.Content);
             return Ok(newFile);
         }
+
+        // POST api/files
+        [AllowAnonymous]
+        [HttpDelete("{id}")]
+        public ActionResult<string> Delete(string id)
+        {
+            this.fileService.Delete(id);
+            return Ok();
+        }
+
         private FileDto ConverFileToFileDto(File file)
         {
             FileDto fileDto = new FileDto()

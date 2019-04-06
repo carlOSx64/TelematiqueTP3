@@ -33,5 +33,13 @@ namespace WebApi.Services
             return file;
         }
 
+        public void Delete(string id) {
+            Console.WriteLine("ahah yes");
+            Console.WriteLine(id);
+            File file = context.Files.Where(f => f.Id == Int32.Parse(id)).FirstOrDefault();
+            context.Files.Remove(file);
+            context.SaveChanges();
+        }
+
     }
 }

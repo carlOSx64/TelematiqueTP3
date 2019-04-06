@@ -22,5 +22,10 @@
 
 - [x] /users/authenticate (POST) : Authentification
 
+### Files
+- [x] /files (POST) : Ajoute un fichier. Besoin de `name` et `content`
+- [x] /files/{someId} (DELETE) : Delete un fichier
+
+
 ### Setup
 - [x] /setup/reset (GET) : Réinitialise la base de données

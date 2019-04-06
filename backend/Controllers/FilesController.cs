@@ -2,6 +2,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.Extensions.Options;
 using WebApi.Models;
+using System;
 using WebApi.Data;
 using WebApi.Services;
 using System.Threading.Tasks;
@@ -25,9 +26,10 @@ namespace WebApi.Controllers
 
         // POST api/files
         [AllowAnonymous]
-        [HttpGet]
+        [HttpPost]
         public ActionResult<string> Create([FromForm]File fileParam)
         {
+            Console.WriteLine("Ahah" + fileParam.ToString());
             File newFile = this.fileService.Create(fileParam.Name, fileParam.Content);
             return Ok(newFile);
         }

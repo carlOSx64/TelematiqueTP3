@@ -24,6 +24,7 @@ namespace WebApi.Data
         public DbSet<Group> Groups { get; set; }
         public DbSet<UserGroup> UserGroup { get; set; }
         public DbSet<Invitation> Invitations { get; set; }
+        public DbSet<ConnectedUser> ConnectedUsers { get; set; }
 
         protected override void OnModelCreating(ModelBuilder builder)
         {
@@ -32,6 +33,7 @@ namespace WebApi.Data
             builder.Entity<User>().Property(u => u.Username).IsRequired();
             builder.Entity<Group>().Property(g => g.Name).IsRequired();
             builder.Entity<File>().Property(f => f.Name).IsRequired();
+            builder.Entity<ConnectedUser>().Property(c => c.UserId).IsRequired();
 
             builder.Entity<UserGroup>()
                 .HasKey(ug => new { ug.UserId, ug.GroupId });

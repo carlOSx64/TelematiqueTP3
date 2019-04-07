@@ -1,5 +1,4 @@
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Authorization;
 using Microsoft.Extensions.Options;
 using WebApi.Models;
 using System;
@@ -11,7 +10,6 @@ using System.Linq;
 
 namespace WebApi.Controllers
 {
-    [Authorize]
     [ApiController]
     [Route("api/[controller]")]
     public class FilesController : Controller
@@ -25,7 +23,7 @@ namespace WebApi.Controllers
         }
 
         // POST api/files
-        [AllowAnonymous]
+        // Anonymous
         [HttpPost]
         public ActionResult<string> Create([FromForm]File fileParam)
         {
@@ -34,7 +32,7 @@ namespace WebApi.Controllers
         }
 
         // POST api/files
-        [AllowAnonymous]
+        // Anonymous
         [HttpDelete("{id}")]
         public ActionResult<string> Delete(string id)
         {

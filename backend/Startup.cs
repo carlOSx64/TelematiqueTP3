@@ -36,6 +36,7 @@ namespace backend
             services.AddScoped<IUserService, UserService>();
             services.AddScoped<IFileService, FileService>();
             services.AddScoped<IGroupService, GroupService>();
+            services.AddScoped<IConnectedUserService, ConnectedUserService>();
             services.AddDbContextPool<SqliteContext>(options => options.UseSqlite(configuration.GetConnectionString("DefaultConnection")));
         }
 

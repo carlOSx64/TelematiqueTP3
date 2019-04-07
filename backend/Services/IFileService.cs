@@ -7,7 +7,7 @@ namespace WebApi.Services
 {
     public interface IFileService
     {
-        File Create(string name, string content, Group group);
+        File Create(string name, string content, int groupId);
         void Delete(string id);
     }
 }

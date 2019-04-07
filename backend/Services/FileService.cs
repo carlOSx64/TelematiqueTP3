@@ -24,14 +24,14 @@ namespace WebApi.Services
             return context.Files.Where(f => f.Id == fileId).Count() > 0;
         }
 
-        public File Create(string name, string content, Group group)
+        public File Create(string name, string content, int groupId)
         {
 
             File file = new File()
             {
                 Name = name,
                 Content = content,
-                Group = group
+                GroupId = groupId
             };
 
             context.Files.Add(file);

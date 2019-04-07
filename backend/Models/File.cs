@@ -12,5 +12,6 @@ namespace WebApi.Models
         public string Name { get; set; }
         public string Content { get; set; }
         public Group Group {get; set;}
+        public int GroupId {get; set;}
     }
 }

@@ -19,13 +19,19 @@ namespace WebApi.Services
             context = sqliteContext;
         }
 
-        public File Create(string name, string content)
+        public bool Exists(int fileId)
+        {
+            return context.Files.Where(f => f.Id == fileId).Count() > 0;
+        }
+
+        public File Create(string name, string content, Group group)
         {
 
             File file = new File()
             {
                 Name = name,
-                Content = content
+                Content = content,
+                Group = group
             };
 
             context.Files.Add(file);

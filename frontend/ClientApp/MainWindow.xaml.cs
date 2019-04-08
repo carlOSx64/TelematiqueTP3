@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
+using System.Net.Http;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
@@ -25,17 +26,21 @@ namespace ClientApp
         List<UserView> users;
         List<Group> groups;
         List<Notification> notifications;
+        HttpClient httpc;
 
-        public MainWindow()
+        public MainWindow(HttpClient httpc)
         {
+            this.httpc = httpc;
             users = GetUsers();
             groups = GetUserGroups();
-
+            
+            //group = GetUserGroupsRequest();
             InitializeComponent();
 
             notifications = new List<Notification>();
             InitializeUserListView();
             InitializeGroupItemControl();
+            
         }
 
         //S'exécute après l'ouverture de la fenêtre
@@ -44,6 +49,7 @@ namespace ClientApp
             base.OnContentRendered(e);
 
             RequestFolderLocation();
+            createrDir();
             Update();
         }
 
@@ -79,6 +85,32 @@ namespace ClientApp
             return placeholder;
         }
 
+
+       /* public async Task<List<Group>> GetUserGroupsRequest()
+        {
+
+            List<Group> groups = null ;
+
+            HttpResponseMessage response = await httpc.GetAsync("api/groups");
+
+            Console.WriteLine(response);
+
+            if (response.IsSuccessStatusCode)
+                groups = await response.Content.ReadAsAsync<List<Group>>();
+
+            return groups;
+        }*/
+
+        public void createrDir()
+        {
+            string path;
+            foreach(Group g in groups)
+            {
+                path = System.IO.Path.Combine(folderLocation, g.Name);
+
+                System.IO.Directory.CreateDirectory(path);
+            }
+        }
         private void RequestFolderLocation()
         {
             MessageBox.Show("Veuillez choisir un emplacement sur votre disque");

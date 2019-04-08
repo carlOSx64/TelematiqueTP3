@@ -23,5 +23,11 @@ namespace ClientApp
         {
             InitializeComponent();
         }
+
+        public async void EnregistrerBtn_Click(object sender, RoutedEventArgs e)
+        {
+
+        }
+
     }
 }

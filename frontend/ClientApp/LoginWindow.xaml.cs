@@ -37,7 +37,7 @@ namespace ClientApp {
 
             if (success)
             {
-                MainWindow mainWindow = new MainWindow();
+                MainWindow mainWindow = new MainWindow(httpc);
                 mainWindow.ShowDialog();
             }
             else

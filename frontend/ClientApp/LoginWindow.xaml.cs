@@ -38,10 +38,7 @@ namespace ClientApp {
             if (success)
             {
                 MainWindow mainWindow = new MainWindow();
-                this.Hide();
                 mainWindow.ShowDialog();
-                this.Show();
-                
             }
             else
                 MessageBox.Show("La connexion au compte a échoué", "", MessageBoxButton.OK, MessageBoxImage.Error);

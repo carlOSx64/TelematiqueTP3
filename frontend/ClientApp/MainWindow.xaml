@@ -5,8 +5,35 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:ClientApp"
         mc:Ignorable="d"
-        Title="MainWindow" Height="450" Width="800">
-    <Grid>
-        
+        Title="Télématique TP3" ResizeMode="NoResize" SizeToContent="WidthAndHeight" WindowStartupLocation="CenterScreen">
+    <Grid Width="545" Height="473">
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition/>
+        </Grid.ColumnDefinitions>
+        <ListView x:Name="usersListView" HorizontalAlignment="Left" Height="340" VerticalAlignment="Center" Width="193" FontWeight="Bold" Margin="0,31,0,102">
+            <ListView.ItemTemplate>
+                <DataTemplate>
+                    <TextBlock Margin="5" Text="{Binding Username}" Foreground="{Binding NameColor}" VerticalAlignment="Center"></TextBlock>
+                </DataTemplate>
+            </ListView.ItemTemplate>
+        </ListView>
+        <ScrollViewer Margin="198,31,0,102">
+            <ItemsControl x:Name="groupsItemControl">
+                <ItemsControl.ItemsPanel>
+                    <ItemsPanelTemplate>
+                        <WrapPanel />
+                    </ItemsPanelTemplate>
+                </ItemsControl.ItemsPanel>
+                <ItemsControl.ItemTemplate>
+                    <DataTemplate>
+                        <Button Margin="5" Width="100" Height="100" Content="{Binding Name}" Tag="{Binding Id}" Click="GroupBtn_Click" />
+                    </DataTemplate>
+                </ItemsControl.ItemTemplate>
+            </ItemsControl>
+        </ScrollViewer>
+        <Label Content="Vos groupes" HorizontalAlignment="Left" Margin="198,0,0,0" VerticalAlignment="Top" RenderTransformOrigin="-3.215,0.208" FontWeight="Bold"/>
+        <Label Content="Utilisateurs" HorizontalAlignment="Left" VerticalAlignment="Top" RenderTransformOrigin="-3.215,0.208" FontWeight="Bold"/>
+        <Button x:Name="newGroupBtn" Content="Nouveau groupe" HorizontalAlignment="Left" Margin="198,376,0,0" VerticalAlignment="Top" Width="118" Click="NewGroupBtn_Click"/>
+        <Button x:Name="SyncBtn" Content="Syncroniser" HorizontalAlignment="Left" Margin="321,376,0,0" VerticalAlignment="Top" Width="118" Click="SyncBtn_Click"/>
     </Grid>
 </Window>

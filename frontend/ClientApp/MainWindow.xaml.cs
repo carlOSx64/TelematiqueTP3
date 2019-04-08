@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -20,9 +21,146 @@ namespace ClientApp
     /// </summary>
     public partial class MainWindow : Window
     {
+        String folderLocation;
+        List<User> userViews;
+        List<Group> groups;
+        List<Notification> notifications;
+
         public MainWindow()
         {
+            userViews = GetUserViews();
+            groups = GetUserGroups();
+
             InitializeComponent();
+
+            notifications = new List<Notification>();
+            InitializeUserListView();
+            InitializeGroupItemControl();
+
+            this.Show();
+
+            RequestFolderLocation();
+            Update();
+        }
+
+        private List<User> GetUserViews()
+        {
+            //Code placeholder
+            List<User> placeholder = new List<User>();
+
+            placeholder.Add(new User("JDISMaster", true));
+            placeholder.Add(new User("Bessamlol", false));
+            placeholder.Add(new User("Carl++", true));
+            placeholder.Add(new User("Natrelcul", false));
+            placeholder.Add(new User("Info tout nu", false));
+
+            return placeholder;
+        }
+
+        private List<Group> GetUserGroups()
+        {
+            //Code placeholder
+            List<Group> placeholder = new List<Group>();
+
+            List<User> users = new List<User>();
+            foreach(User uv in userViews)
+                users.Add(uv);
+
+            List<User> admin = new List<User>();
+            admin.Add(userViews.First());
+
+            placeholder.Add(new Group("32", "IFT585", users, admin));
+            placeholder.Add(new Group("33", "JDIS", users, admin));
+
+            return placeholder;
+        }
+
+        private void RequestFolderLocation()
+        {
+            MessageBox.Show("Veuillez choisir un emplacement sur votre disque");
+            using (var dialog = new System.Windows.Forms.FolderBrowserDialog())
+            {
+                bool folderLocationSelected = false;
+                do
+                {
+                    System.Windows.Forms.DialogResult result = dialog.ShowDialog();
+                    folderLocation = dialog.SelectedPath;
+
+                    folderLocationSelected = folderLocation != "";
+                    if(!folderLocationSelected)
+                        MessageBox.Show("Le programme à besoin d'un répertoire pour continuer", "", MessageBoxButton.OK, MessageBoxImage.Error);
+                } while(!folderLocationSelected);
+            }
+        }
+
+        private void Update()
+        {
+            UpdateUsers();
+            UpdateGroups();
+            PullNotifications();
+            TreatNotifications();
+        }
+
+        private void InitializeUserListView()
+        {
+            //Liaison de usersListView avec userViews
+            usersListView.ItemsSource = userViews;
+
+            //Tri pour que les utilisateurs connectées se retrouve en haut
+            CollectionView view = (CollectionView)CollectionViewSource.GetDefaultView(usersListView.ItemsSource);
+			view.SortDescriptions.Add(new SortDescription("IsConnected", ListSortDirection.Descending));
+        }
+
+        private void InitializeGroupItemControl()
+        {
+            //Liaison de groupsItemControl avec groups
+            groupsItemControl.ItemsSource = groups;
+        }
+
+        private void UpdateUsers()
+        {
+
+        }
+
+        private void UpdateGroups()
+        {
+
+        }
+
+        private void PullNotifications()
+        {
+            //Code placeholder
+            notifications.Add(new Notification("Ceci est une notification"));
+            notifications.Add(new GroupInvitiationNotification(groups.First(), groups.First().Admins.First()));
+        }
+
+        private void TreatNotifications()
+        {
+            foreach(Notification notification in notifications)
+            {
+                notification.Trigger();
+            }
+            notifications.Clear();
+        }
+
+        private void SyncBtn_Click(object sender, RoutedEventArgs e)
+        {
+            Update();
+        }
+
+        private void GroupBtn_Click(object sender, RoutedEventArgs e)
+        {
+            string id = (string)(sender as Button).Tag;
+            Group group = groups.Find(g => g.Id == id);
+
+            GroupWindow groupWindow = new GroupWindow(group);
+            groupWindow.ShowDialog();
+        }
+
+        private void NewGroupBtn_Click(object sender, RoutedEventArgs e)
+        {
+            CreateGroupWindow createGroupWindow = new CreateGroupWindow();
+            createGroupWindow.ShowDialog();
         }
     }
 }

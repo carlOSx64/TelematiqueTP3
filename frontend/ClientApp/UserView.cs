@@ -6,9 +6,9 @@ using System.Threading.Tasks;
 
 namespace ClientApp
 {
-    public class User
+    public class UserView
     {
-        public User(string username, bool isConnected)
+        public UserView(string username, bool isConnected)
         {
             Username = username;
             IsConnected = isConnected;

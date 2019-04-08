@@ -22,7 +22,7 @@ namespace ClientApp
     public partial class MainWindow : Window
     {
         String folderLocation;
-        List<User> users;
+        List<UserView> users;
         List<Group> groups;
         List<Notification> notifications;
 
@@ -36,23 +36,27 @@ namespace ClientApp
             notifications = new List<Notification>();
             InitializeUserListView();
             InitializeGroupItemControl();
+        }
 
-            this.Show();
+        //S'exécute après l'ouverture de la fenêtre
+        protected override void OnContentRendered(EventArgs e)
+        {
+            base.OnContentRendered(e);
 
             RequestFolderLocation();
             Update();
         }
 
-        private List<User> GetUsers()
+        private List<UserView> GetUsers()
         {
             //Code placeholder
-            List<User> placeholder = new List<User>();
+            List<UserView> placeholder = new List<UserView>();
 
-            placeholder.Add(new User("JDISMaster", true));
-            placeholder.Add(new User("Bessamlol", false));
-            placeholder.Add(new User("Carl++", true));
-            placeholder.Add(new User("Natrelcul", false));
-            placeholder.Add(new User("Info tout nu", false));
+            placeholder.Add(new UserView("JDISMaster", true));
+            placeholder.Add(new UserView("Bessamlol", false));
+            placeholder.Add(new UserView("Carl++", true));
+            placeholder.Add(new UserView("Natrelcul", false));
+            placeholder.Add(new UserView("Info tout nu", false));
 
             return placeholder;
         }
@@ -62,11 +66,11 @@ namespace ClientApp
             //Code placeholder
             List<Group> placeholder = new List<Group>();
 
-            List<User> users = new List<User>();
-            foreach(User uv in this.users)
+            List<UserView> users = new List<UserView>();
+            foreach(UserView uv in this.users)
                 users.Add(uv);
 
-            List<User> admin = new List<User>();
+            List<UserView> admin = new List<UserView>();
             admin.Add(this.users.First());
 
             placeholder.Add(new Group("32", "IFT585", users, admin));

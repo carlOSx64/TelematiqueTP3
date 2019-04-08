@@ -26,7 +26,7 @@ namespace ClientApp {
             InitializeComponent();
         }
 
-        private void ConnectionBtn_Click(object sender, RoutedEventArgs e) {
+        private async void ConnectionBtn_Click(object sender, RoutedEventArgs e) {
             bool success = true;
 
             string username = usernameTxtBox.Text;
@@ -37,14 +37,17 @@ namespace ClientApp {
             if(success)
             {
                 MainWindow mainWindow = new MainWindow();
-                this.Close();
+                this.Hide();
+                mainWindow.ShowDialog();
+                this.Show();
+                
             }
             else
                 MessageBox.Show("La connexion au compte a échoué", "", MessageBoxButton.OK, MessageBoxImage.Error);
         }
 
         private void CreateUserBtn_Click(object sender, RoutedEventArgs e) {
-            RegisterWindow registerWindow = new RegisterWindow();
+            RegisterWindow registerWindow = new RegisterWindow(httpc);
             registerWindow.ShowDialog();
         }
     }

@@ -8,7 +8,7 @@ namespace ClientApp
 {
     public class Group
     {
-        public Group(string id, string name, List<User> users, List<User> admins)
+        public Group(string id, string name, List<UserView> users, List<UserView> admins)
         {
             Id = id;
             Name = name;
@@ -20,8 +20,8 @@ namespace ClientApp
 
         public string Name { get; }
 
-        public List<User> Users { get; }
+        public List<UserView> Users { get; }
 
-        public List<User> Admins { get; }
+        public List<UserView> Admins { get; }
     }
 }

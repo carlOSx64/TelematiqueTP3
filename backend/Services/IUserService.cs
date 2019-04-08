@@ -13,7 +13,7 @@ namespace WebApi.Services
         List<Invitation> GetInvitationsByUser(int userId);
         User GetUserByApiKey(string apiKey);
         void DeleteAll();
-        void Create(string username, string password);
+        bool Create(string username, string password);
         User Authenticate(string username, string password);
         bool Exists(int userId);
     }

@@ -24,7 +24,7 @@ namespace ClientApp {
             InitializeComponent();
         }
 
-        private async void ConnectionBtn_Click(object sender, RoutedEventArgs e) {
+        private void ConnectionBtn_Click(object sender, RoutedEventArgs e) {
 
             string address = addressTxtBox.Text;
 
@@ -47,8 +47,9 @@ namespace ClientApp {
                     if(response.IsSuccessStatusCode)
                     {
                         LoginWindow loginWindow = new LoginWindow(httpc);
-                        loginWindow.Show();
-                        this.Close();
+                        this.Hide();
+                        loginWindow.ShowDialog();
+                        this.Show();
                     }
                     else
                         throw new Exception();

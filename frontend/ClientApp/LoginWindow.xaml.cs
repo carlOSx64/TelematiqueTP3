@@ -33,8 +33,9 @@ namespace ClientApp {
             string password = passwordTxtBox.Text;
 
             //Connexion...
+            success = Login(username, password);
 
-            if(success)
+            if (success)
             {
                 MainWindow mainWindow = new MainWindow();
                 this.Hide();
@@ -44,6 +45,24 @@ namespace ClientApp {
             }
             else
                 MessageBox.Show("La connexion au compte a échoué", "", MessageBoxButton.OK, MessageBoxImage.Error);
+        }
+
+        private bool Login(string username, string password)
+        {
+            var connectionData = new Dictionary<string, string>
+            {
+                { "Username", username },
+                { "Password", password }
+            };
+
+            HttpContent content = new FormUrlEncodedContent(connectionData);
+
+            HttpResponseMessage response = httpc.PostAsync("api/users/authenticate", content).Result;
+
+            if (response.IsSuccessStatusCode)
+                return true;
+
+            return false;
         }
 
         private void CreateUserBtn_Click(object sender, RoutedEventArgs e) {

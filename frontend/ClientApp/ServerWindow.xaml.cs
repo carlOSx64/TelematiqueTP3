@@ -47,9 +47,7 @@ namespace ClientApp {
                     if(response.IsSuccessStatusCode)
                     {
                         LoginWindow loginWindow = new LoginWindow(httpc);
-                        this.Hide();
                         loginWindow.ShowDialog();
-                        this.Show();
                     }
                     else
                         throw new Exception();

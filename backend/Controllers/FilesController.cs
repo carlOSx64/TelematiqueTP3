@@ -27,7 +27,7 @@ namespace WebApi.Controllers
         [HttpPost]
         public ActionResult<string> Create([FromForm]File fileParam)
         {
-            File newFile = this.fileService.Create(fileParam.Name, fileParam.Content);
+            File newFile = this.fileService.Create(fileParam.Name, fileParam.Content, fileParam.GroupId);
             return Ok(newFile);
         }
 

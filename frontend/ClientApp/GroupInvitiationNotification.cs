@@ -9,7 +9,7 @@ namespace ClientApp
 {
     class GroupInvitiationNotification : Notification
     {
-        public GroupInvitiationNotification(Group group, User admin) : base("{0} vous invite à rejoindre le groupe {1}.")
+        public GroupInvitiationNotification(Group group, User admin) : base("{0} vous invite à rejoindre le groupe {1}")
         {
             Group = group;
             Admin = admin;

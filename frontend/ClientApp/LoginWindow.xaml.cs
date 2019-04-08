@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net.Http;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
@@ -17,7 +18,11 @@ namespace ClientApp {
     /// Logique d'interaction pour LoginWindow.xaml
     /// </summary>
     public partial class LoginWindow : Window {
-        public LoginWindow() {
+
+        HttpClient httpc;
+
+        public LoginWindow(HttpClient httpc) {
+            this.httpc = httpc;
             InitializeComponent();
         }
 

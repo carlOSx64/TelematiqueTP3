@@ -35,7 +35,7 @@ namespace ClientApp {
                 this.Close();
             }
             else
-                MessageBox.Show("La création du compte à échoué", "", MessageBoxButton.OK, MessageBoxImage.Error);
+                MessageBox.Show("La création du compte a échouée", "", MessageBoxButton.OK, MessageBoxImage.Error);
         }
     }
 }

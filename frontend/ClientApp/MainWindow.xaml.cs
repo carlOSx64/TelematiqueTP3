@@ -22,13 +22,13 @@ namespace ClientApp
     public partial class MainWindow : Window
     {
         String folderLocation;
-        List<User> userViews;
+        List<User> users;
         List<Group> groups;
         List<Notification> notifications;
 
         public MainWindow()
         {
-            userViews = GetUserViews();
+            users = GetUsers();
             groups = GetUserGroups();
 
             InitializeComponent();
@@ -43,7 +43,7 @@ namespace ClientApp
             Update();
         }
 
-        private List<User> GetUserViews()
+        private List<User> GetUsers()
         {
             //Code placeholder
             List<User> placeholder = new List<User>();
@@ -63,11 +63,11 @@ namespace ClientApp
             List<Group> placeholder = new List<Group>();
 
             List<User> users = new List<User>();
-            foreach(User uv in userViews)
+            foreach(User uv in this.users)
                 users.Add(uv);
 
             List<User> admin = new List<User>();
-            admin.Add(userViews.First());
+            admin.Add(this.users.First());
 
             placeholder.Add(new Group("32", "IFT585", users, admin));
             placeholder.Add(new Group("33", "JDIS", users, admin));
@@ -103,10 +103,10 @@ namespace ClientApp
 
         private void InitializeUserListView()
         {
-            //Liaison de usersListView avec userViews
-            usersListView.ItemsSource = userViews;
+            //Liaison de usersListView avec users
+            usersListView.ItemsSource = users;
 
-            //Tri pour que les utilisateurs connectées se retrouve en haut
+            //Tri pour que les utilisateurs connectés se retrouvent en haut
             CollectionView view = (CollectionView)CollectionViewSource.GetDefaultView(usersListView.ItemsSource);
 			view.SortDescriptions.Add(new SortDescription("IsConnected", ListSortDirection.Descending));
         }

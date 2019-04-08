@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Newtonsoft.Json;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
@@ -34,7 +35,7 @@ namespace ClientApp
             users = GetUsers();
             groups = GetUserGroups();
             
-            //group = GetUserGroupsRequest();
+            //getAllGroups(); //Ne fonctionne pas waiit a linifni
             InitializeComponent();
 
             notifications = new List<Notification>();
@@ -101,6 +102,37 @@ namespace ClientApp
             return groups;
         }*/
 
+        //devrais devenir getClientGroups
+        public async void getAllGroups()
+        {
+            bool success = true;
+
+
+
+            //Connexion...
+
+
+            this.groups =  this.GetAllGroupAsync(httpc).Result;
+     
+
+            if (success)
+            {
+                MainWindow mainWindow = new MainWindow(httpc);
+                mainWindow.ShowDialog();
+            }
+            else
+                MessageBox.Show("getAllGroup a échoué", "", MessageBoxButton.OK, MessageBoxImage.Error);
+        }
+        private async Task<List<Group>> GetAllGroupAsync(HttpClient httpc)
+        {
+            HttpResponseMessage response = await httpc.GetAsync("api/groups");
+            if (response.IsSuccessStatusCode)
+            {
+                Group[] groups = await response.Content.ReadAsAsync<Group[]>();
+                return new List<Group>(groups);
+            }
+            return null;
+        }
         public void createrDir()
         {
             string path;

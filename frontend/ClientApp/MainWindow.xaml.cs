@@ -135,7 +135,7 @@ namespace ClientApp
             PullNotifications();
             TreatNotifications();
             CreateDirectories();
-            //CreateFileByGroup();
+            CreateFileByGroup();
             this.Dispatcher.Invoke(() =>
             {
                 updateTimeLabel.Content = "Last update: " + DateTime.Now.ToString();

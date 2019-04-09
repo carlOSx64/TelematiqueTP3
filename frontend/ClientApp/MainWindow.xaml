@@ -35,5 +35,6 @@
         <Label Content="Utilisateurs" HorizontalAlignment="Left" VerticalAlignment="Top" RenderTransformOrigin="-3.215,0.208" FontWeight="Bold"/>
         <Button x:Name="newGroupBtn" Content="Nouveau groupe" HorizontalAlignment="Left" Margin="198,376,0,0" VerticalAlignment="Top" Width="118" Click="NewGroupBtn_Click"/>
         <Button x:Name="SyncBtn" Content="Synchroniser" HorizontalAlignment="Left" Margin="321,376,0,0" VerticalAlignment="Top" Width="118" Click="SyncBtn_Click"/>
+        <Label x:Name="updateTimeLabel" Content="Last Update:" HorizontalAlignment="Left" Margin="21,430,0,0" VerticalAlignment="Top" RenderTransformOrigin="0.474,-0.87"/>
     </Grid>
 </Window>

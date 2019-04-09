@@ -5,6 +5,7 @@ using System.ComponentModel;
 using System.Linq;
 using System.Net.Http;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
@@ -52,8 +53,19 @@ namespace ClientApp
             base.OnContentRendered(e);
 
             RequestFolderLocation();
+            var dueTime = TimeSpan.FromMinutes(2);
+            var interval = TimeSpan.FromMinutes(2);
+
+            RunPeriodicAsync(Update, dueTime, interval, CancellationToken.None);
             Update();
-            CreateDirectories();
+        }
+
+
+        
+        //Poour tester le timer
+        private void TestTimer()
+        {
+            MessageBox.Show("Hello, world!");
         }
 
         private async void CreateDirectories()
@@ -85,6 +97,7 @@ namespace ClientApp
                 foreach (File file in files)
                 {
                     System.IO.FileStream fstream = System.IO.File.Create(path);
+                    //TODO write file.data dans le fstream
                 }
             }
         }
@@ -113,6 +126,9 @@ namespace ClientApp
             UpdateGroups();
             PullNotifications();
             TreatNotifications();
+            CreateDirectories();
+            //CreateFileByGroup();
+            updateTimeLabel.Content = "Last update: " + DateTime.Now.ToString();
         }
 
         private async void UpdateUsers()
@@ -134,7 +150,7 @@ namespace ClientApp
         private void PullNotifications()
         {
             //Code placeholder
-            notifications.Add(new Notification("Ceci est une notification"));
+            //notifications.Add(new Notification("Ceci est une notification"));
             //notifications.Add(new GroupInvitiationNotification(groups.First(), groups.First().Admins.First()));
         }
 
@@ -145,6 +161,29 @@ namespace ClientApp
                 notification.Trigger();
             }
             notifications.Clear();
+        }
+
+        //https://stackoverflow.com/questions/14296644/how-to-execute-a-method-periodically-from-wpf-client-application-using-threading
+        // The `onTick` method will be called periodically unless cancelled.
+        private static async Task RunPeriodicAsync(Action onTick,
+                                                   TimeSpan dueTime,
+                                                   TimeSpan interval,
+                                                   CancellationToken token)
+        {
+            // Initial wait time before we begin the periodic loop.
+            if (dueTime > TimeSpan.Zero)
+                await Task.Delay(dueTime, token);
+
+            // Repeat this loop until cancelled.
+            while (!token.IsCancellationRequested)
+            {
+                // Call our onTick function.
+                onTick?.Invoke();
+
+                // Wait to repeat again.
+                if (interval > TimeSpan.Zero)
+                    await Task.Delay(interval, token);
+            }
         }
 
         private void SyncBtn_Click(object sender, RoutedEventArgs e)

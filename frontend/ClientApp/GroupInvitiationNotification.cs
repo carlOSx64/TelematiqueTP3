@@ -4,12 +4,13 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
+using WebApi.Models;
 
 namespace ClientApp
 {
     class GroupInvitiationNotification : Notification
     {
-        public GroupInvitiationNotification(Group group, User admin) : base("{0} vous invite à rejoindre le groupe {1}.")
+        public GroupInvitiationNotification(Group group, UserView admin) : base("{0} vous invite à rejoindre le groupe {1}")
         {
             Group = group;
             Admin = admin;
@@ -17,7 +18,7 @@ namespace ClientApp
 
         private Group Group { get; }
 
-        private User Admin { get; }
+        private UserView Admin { get; }
 
         override public void Trigger()
         {

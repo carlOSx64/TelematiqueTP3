@@ -11,7 +11,7 @@
             <ColumnDefinition/>
         </Grid.ColumnDefinitions>
         <TextBox x:Name="usernameTxtBox" HorizontalAlignment="Left" Height="23" Margin="96,52,0,0" TextWrapping="Wrap" Text="" VerticalAlignment="Top" Width="178"/>
-        <TextBox x:Name="passwordTxtBox" HorizontalAlignment="Left" Height="23" Margin="96,87,0,0" TextWrapping="Wrap" Text="" VerticalAlignment="Top" Width="178" RenderTransformOrigin="-0.348,-2.301"/>
+        <PasswordBox x:Name="passwordTxtBox" HorizontalAlignment="Left" Height="23" Margin="96,87,0,0" VerticalAlignment="Top" Width="178" RenderTransformOrigin="-0.348,-2.301"/>
         <Label Content="Username" HorizontalAlignment="Left" Margin="10,48,0,0" VerticalAlignment="Top" Height="26" Width="63"/>
         <Label Content="Mot de passe" HorizontalAlignment="Left" Margin="10,83,0,0" VerticalAlignment="Top" Height="26" Width="81"/>
         <Button x:Name="registerBtn" Content="Enregister" HorizontalAlignment="Left" Margin="96,136,0,0" VerticalAlignment="Top" Width="75" Click="RegisterBtn_Click"/>

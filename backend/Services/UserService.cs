@@ -51,19 +51,29 @@ namespace WebApi.Services
             return invitations;
         }
 
-        public void Create(string username, string password)
+        public bool Create(string username, string password)
         {
-
-            User user = new User()
+            if(!String.IsNullOrEmpty(username) && !String.IsNullOrEmpty(password))
             {
-                Username = username,
-                Password = password,
-                ApiKey = RandomString(64)
+                User user = new User()
+                {
+                    Username = username,
+                    Password = password,
+                    ApiKey = RandomString(64)
 
-            };
-
-            context.Users.Add(user);
-            context.SaveChanges();
+                };
+                try
+                {
+                    context.Users.Add(user);
+                    context.SaveChanges();
+                    return true;
+                }
+                catch
+                {
+                    return false;
+                }
+            }
+            return false;
         }
 
         public void DeleteAll()

@@ -41,6 +41,19 @@ namespace WebApi.Controllers
             return Ok(new { id = user.Id, username = user.Username, apiKey = user.ApiKey});
         }
 
+        // POST api/users/register
+        // Anonymous
+        [HttpPost("register")]
+        public ActionResult<string> Register([FromForm]User userParam)
+        {
+            bool success = _userService.Create(userParam.Username, userParam.Password);
+
+            if (!success)
+                return BadRequest(new { message = "Failed to create new account" });
+
+            return Ok();
+        }
+
         // GET api/users/logout
         // Authenticated
         [HttpGet("logout")]

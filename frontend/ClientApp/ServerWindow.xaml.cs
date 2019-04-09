@@ -11,6 +11,9 @@ using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Shapes;
+using System.Net.Http;
+using System.Net.Http.Headers;
+using System.Net;
 
 namespace ClientApp {
     /// <summary>
@@ -22,21 +25,51 @@ namespace ClientApp {
         }
 
         private void ConnectionBtn_Click(object sender, RoutedEventArgs e) {
-            bool success = true;
 
-            string ip = IPTxtBox.Text;
+            string address = addressTxtBox.Text;
 
-            // Connexion...
-
-
-            if(success)
+            ServicePointManager.ServerCertificateValidationCallback = delegate { return true; };
+            using(HttpClient httpc = new HttpClient())
             {
-                LoginWindow loginWindow = new LoginWindow();
-                loginWindow.Show();
-                this.Close();
+                try
+                {
+                    httpc.BaseAddress = new Uri(address);
+                }
+                catch(Exception)
+                {
+                    MessageBox.Show("Le format de l'adresse est invalide", "", MessageBoxButton.OK, MessageBoxImage.Error);
+                    return;
+                }
+
+                try
+                {
+                    HttpResponseMessage response = httpc.GetAsync("api/users").Result;
+                    if(response.IsSuccessStatusCode)
+                    {
+                        LoginWindow loginWindow = new LoginWindow(httpc);
+                        loginWindow.ShowDialog();
+                    }
+                    else
+                        throw new Exception();
+                }
+                catch(Exception)
+                {
+                    MessageBox.Show("La connexion avec le serveur à échoué", "", MessageBoxButton.OK, MessageBoxImage.Error);
+                }
             }
-            else
-                MessageBox.Show("La connexion avec le serveur à échoué", "", MessageBoxButton.OK, MessageBoxImage.Error);
         }
+
+    /*
+        private async Task<List<User>> DownloadPageAsync(HttpClient httpc)
+        {
+            HttpResponseMessage response = await httpc.GetAsync("https://localhost:5001/api/users");    
+            if (response.IsSuccessStatusCode)
+            {    
+                User[] users = await response.Content.ReadAsAsync<User[]>();
+                return new List<User>(users);
+            }
+            return null;
+        }
+        */
     }
 }

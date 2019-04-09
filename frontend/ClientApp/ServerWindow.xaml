@@ -10,8 +10,8 @@
         <Grid.ColumnDefinitions>
             <ColumnDefinition/>
         </Grid.ColumnDefinitions>
-        <TextBox x:Name="IPTxtBox" HorizontalAlignment="Left" Height="23" Margin="109,52,0,0" TextWrapping="Wrap" Text="" VerticalAlignment="Top" Width="165"/>
-        <Label Content="IP du serveur" HorizontalAlignment="Left" Margin="10,48,0,0" VerticalAlignment="Top" Height="26" Width="81"/>
+        <TextBox x:Name="addressTxtBox" Text="https://localhost:5001/" HorizontalAlignment="Left" Height="23" Margin="127,52,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="147"/>
+        <Label Content="Adresse du serveur" HorizontalAlignment="Left" Margin="10,48,0,0" VerticalAlignment="Top" Height="26" Width="117"/>
         <Button x:Name="connectionBtn" Content="Connexion" HorizontalAlignment="Left" Margin="96,136,0,0" VerticalAlignment="Top" Width="75" Click="ConnectionBtn_Click"/>
         <Label Content="Connexion au serveur" HorizontalAlignment="Left" Margin="10,10,0,0" VerticalAlignment="Top" FontWeight="Bold"/>
 

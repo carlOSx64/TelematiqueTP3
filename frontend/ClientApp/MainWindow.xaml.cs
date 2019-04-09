@@ -1,8 +1,11 @@
-﻿using System;
+using ClientApp.Helpers;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
+using System.Net.Http;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
@@ -13,6 +16,7 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
+using WebApi.Models;
 
 namespace ClientApp
 {
@@ -22,57 +26,80 @@ namespace ClientApp
     public partial class MainWindow : Window
     {
         String folderLocation;
-        List<User> userViews;
-        List<Group> groups;
         List<Notification> notifications;
+        List<Group> groups;
 
-        public MainWindow()
+        User currentUser;
+
+        HttpClient httpc;
+        UserHelper userHelper;
+
+        public MainWindow(HttpClient httpc, User currentUser)
         {
-            userViews = GetUserViews();
-            groups = GetUserGroups();
+            this.httpc = httpc;
+
+            userHelper = new UserHelper(httpc);
+
+            this.currentUser = currentUser;
 
             InitializeComponent();
 
             notifications = new List<Notification>();
-            InitializeUserListView();
-            InitializeGroupItemControl();
+        }
 
-            this.Show();
+        //S'exécute après l'ouverture de la fenêtre
+        protected override void OnContentRendered(EventArgs e)
+        {
+            base.OnContentRendered(e);
 
             RequestFolderLocation();
+            var dueTime = TimeSpan.FromMinutes(2);
+            var interval = TimeSpan.FromMinutes(2);
+
+            RunPeriodicAsync(Update, dueTime, interval, CancellationToken.None);
             Update();
         }
 
-        private List<User> GetUserViews()
+
+        
+        //Poour tester le timer
+        private void TestTimer()
         {
-            //Code placeholder
-            List<User> placeholder = new List<User>();
-
-            placeholder.Add(new User("JDISMaster", true));
-            placeholder.Add(new User("Bessamlol", false));
-            placeholder.Add(new User("Carl++", true));
-            placeholder.Add(new User("Natrelcul", false));
-            placeholder.Add(new User("Info tout nu", false));
-
-            return placeholder;
+            MessageBox.Show("Hello, world!");
         }
 
-        private List<Group> GetUserGroups()
+        private async void CreateDirectories()
         {
-            //Code placeholder
-            List<Group> placeholder = new List<Group>();
+            string path;
 
-            List<User> users = new List<User>();
-            foreach(User uv in userViews)
-                users.Add(uv);
+            List<Group> groups = await new GroupHelper(httpc).GetUserGroups(currentUser);
 
-            List<User> admin = new List<User>();
-            admin.Add(userViews.First());
+            foreach(Group group in groups)
+            {
+                path = System.IO.Path.Combine(folderLocation, group.Name);
 
-            placeholder.Add(new Group("32", "IFT585", users, admin));
-            placeholder.Add(new Group("33", "JDIS", users, admin));
+                System.IO.Directory.CreateDirectory(path);
+            }
+        }
 
-            return placeholder;
+        private async void CreateFileByGroup()
+        {
+            string path;
+
+            List<Group> groups = await new GroupHelper(httpc).GetUserGroups(currentUser);
+
+            foreach (Group group in groups)
+            {
+                path = System.IO.Path.Combine(folderLocation, group.Name);
+
+                List<File> files = await new FileHelper(httpc).GetGroupFiles(group);
+
+                foreach (File file in files)
+                {
+                    System.IO.FileStream fstream = System.IO.File.Create(path);
+                    //TODO write file.data dans le fstream
+                }
+            }
         }
 
         private void RequestFolderLocation()
@@ -99,39 +126,32 @@ namespace ClientApp
             UpdateGroups();
             PullNotifications();
             TreatNotifications();
+            CreateDirectories();
+            //CreateFileByGroup();
+            updateTimeLabel.Content = "Last update: " + DateTime.Now.ToString();
         }
 
-        private void InitializeUserListView()
+        private async void UpdateUsers()
         {
-            //Liaison de usersListView avec userViews
-            usersListView.ItemsSource = userViews;
+            usersListView.ItemsSource = await new UserHelper(httpc).GetUserViews();
 
-            //Tri pour que les utilisateurs connectées se retrouve en haut
+            //Tri pour que les utilisateurs connectés se retrouvent en haut
             CollectionView view = (CollectionView)CollectionViewSource.GetDefaultView(usersListView.ItemsSource);
 			view.SortDescriptions.Add(new SortDescription("IsConnected", ListSortDirection.Descending));
         }
 
-        private void InitializeGroupItemControl()
+        private async void UpdateGroups()
         {
-            //Liaison de groupsItemControl avec groups
+            groups = await new GroupHelper(httpc).GetUserGroups(currentUser);
+
             groupsItemControl.ItemsSource = groups;
-        }
-
-        private void UpdateUsers()
-        {
-
-        }
-
-        private void UpdateGroups()
-        {
-
         }
 
         private void PullNotifications()
         {
             //Code placeholder
-            notifications.Add(new Notification("Ceci est une notification"));
-            notifications.Add(new GroupInvitiationNotification(groups.First(), groups.First().Admins.First()));
+            //notifications.Add(new Notification("Ceci est une notification"));
+            //notifications.Add(new GroupInvitiationNotification(groups.First(), groups.First().Admins.First()));
         }
 
         private void TreatNotifications()
@@ -143,6 +163,29 @@ namespace ClientApp
             notifications.Clear();
         }
 
+        //https://stackoverflow.com/questions/14296644/how-to-execute-a-method-periodically-from-wpf-client-application-using-threading
+        // The `onTick` method will be called periodically unless cancelled.
+        private static async Task RunPeriodicAsync(Action onTick,
+                                                   TimeSpan dueTime,
+                                                   TimeSpan interval,
+                                                   CancellationToken token)
+        {
+            // Initial wait time before we begin the periodic loop.
+            if (dueTime > TimeSpan.Zero)
+                await Task.Delay(dueTime, token);
+
+            // Repeat this loop until cancelled.
+            while (!token.IsCancellationRequested)
+            {
+                // Call our onTick function.
+                onTick?.Invoke();
+
+                // Wait to repeat again.
+                if (interval > TimeSpan.Zero)
+                    await Task.Delay(interval, token);
+            }
+        }
+
         private void SyncBtn_Click(object sender, RoutedEventArgs e)
         {
             Update();
@@ -150,7 +193,7 @@ namespace ClientApp
 
         private void GroupBtn_Click(object sender, RoutedEventArgs e)
         {
-            string id = (string)(sender as Button).Tag;
+            int id = (int)(sender as Button).Tag;
             Group group = groups.Find(g => g.Id == id);
 
             GroupWindow groupWindow = new GroupWindow(group);
@@ -159,8 +202,9 @@ namespace ClientApp
 
         private void NewGroupBtn_Click(object sender, RoutedEventArgs e)
         {
-            CreateGroupWindow createGroupWindow = new CreateGroupWindow();
+            CreateGroupWindow createGroupWindow = new CreateGroupWindow(this.httpc, currentUser);
             createGroupWindow.ShowDialog();
+            UpdateGroups();
         }
     }
 }

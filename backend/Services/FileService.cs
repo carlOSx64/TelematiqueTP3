@@ -26,6 +26,14 @@ namespace WebApi.Services
             return context.Files.Where(f => f.Id == fileId).Count() > 0;
         }
 
+        public File Get(int fileId)
+        {
+
+            File file = context.Files.Where(f => f.Id == fileId).FirstOrDefault();
+
+            return file;
+        }
+
         public File Create(string name, string content, int groupId)
         {
 

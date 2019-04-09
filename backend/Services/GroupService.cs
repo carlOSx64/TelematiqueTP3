@@ -22,6 +22,7 @@ namespace WebApi.Services
             Group group = context.Groups
                 .Include(g => g.UserGroups)
                 .Include(g => g.Files)
+                .Where(g => g.Id == groupId)
                 .FirstOrDefault();
 
             return group;

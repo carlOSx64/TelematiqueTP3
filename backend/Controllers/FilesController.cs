@@ -22,6 +22,17 @@ namespace WebApi.Controllers
             this.fileService = fileService;
         }
 
+        // GET api/files/{id}
+        // Anonymous
+        [HttpGet]
+        [Route("{fileId}")]
+        public ActionResult<string> Get(int fileId)
+        {
+            File file = this.fileService.Get(fileId);
+            
+            return Ok(file);
+        }
+        
         // POST api/files
         // Anonymous
         [HttpPost]
@@ -31,7 +42,7 @@ namespace WebApi.Controllers
             return Ok(newFile);
         }
 
-        // POST api/files
+        // DELETE api/files
         // Anonymous
         [HttpDelete("{id}")]
         public ActionResult<string> Delete(string id)

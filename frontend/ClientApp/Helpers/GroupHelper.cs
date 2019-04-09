@@ -16,11 +16,11 @@ namespace ClientApp.Helpers {
             this.httpc = httpc;
         }
 
-        public async Task<List<Group>> GetUserGroups(User user)
+        private async Task<List<Group>> GetGroupsTemplate(string route)
         {
             try
             {
-                HttpResponseMessage response = await httpc.GetAsync(String.Format("api/users/{0}/groups", user.Id));
+                HttpResponseMessage response = await httpc.GetAsync(route);
                 if (response.IsSuccessStatusCode)
                 {    
                     Group[] groups = await response.Content.ReadAsAsync<Group[]>();
@@ -33,6 +33,16 @@ namespace ClientApp.Helpers {
             {
                 return null;
             }
+        }
+
+        public async Task<List<Group>> GetGroups()
+        {
+            return await GetGroupsTemplate("api/groups");
+        }
+
+        public async Task<List<Group>> GetUserGroups(User user)
+        {
+            return await GetGroupsTemplate(String.Format("api/users/{0}/groups", user.Id));
         }
     }
 }

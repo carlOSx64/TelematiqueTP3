@@ -144,8 +144,9 @@ namespace ClientApp
 
         private void NewGroupBtn_Click(object sender, RoutedEventArgs e)
         {
-            CreateGroupWindow createGroupWindow = new CreateGroupWindow(this.httpc);
+            CreateGroupWindow createGroupWindow = new CreateGroupWindow(this.httpc, currentUser);
             createGroupWindow.ShowDialog();
+            UpdateGroups();
         }
     }
 }

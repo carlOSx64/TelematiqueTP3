@@ -1,4 +1,5 @@
-﻿using System;
+﻿using ClientApp.Helpers;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Net.Http;
@@ -12,6 +13,7 @@ using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Shapes;
+using WebApi.Models;
 
 namespace ClientApp
 {
@@ -21,45 +23,64 @@ namespace ClientApp
     public partial class CreateGroupWindow : Window
     {
         HttpClient httpc;
-        public CreateGroupWindow(HttpClient httpc)
+
+        User user;
+
+        public CreateGroupWindow(HttpClient httpc, User user)
         {
-            InitializeComponent();
             this.httpc = httpc;
+            this.user = user;
+            InitializeComponent();
         }
 
-        public async void EnregistrerBtn_Click(object sender, RoutedEventArgs e)
+        private async void EnregistrerBtn_Click(object sender, RoutedEventArgs e)
         {
-            bool success = true;
+            string nom = groupTxtBox.Text;
 
-            string nom = addressTxtBox.Text;
-            //Connexion...
-            success = createGroup(nom);
+            bool success = await CreateGroup(nom);
 
             if (success)
             {
-                MainWindow mainWindow = new MainWindow(httpc);//Pas sur comment revenir a mainwindow ?
-                mainWindow.ShowDialog();
+                MessageBox.Show(String.Format("Le groupe {0} a été crée avec succès", nom), "", MessageBoxButton.OK, MessageBoxImage.Information);
+                this.Close();
             }
             else
-                MessageBox.Show("Echec ajout de groupe", "", MessageBoxButton.OK, MessageBoxImage.Error);
+                MessageBox.Show("Échec de l'ajout du groupe", "", MessageBoxButton.OK, MessageBoxImage.Error);
         }
 
-        public bool createGroup(string name)
+        public async Task<bool> CreateGroup(string name)
         {
-            var connectionData = new Dictionary<string, string>
+            if(!String.IsNullOrWhiteSpace(name))
             {
-                { "name", name },
-            };
+                var groupData = new Dictionary<string, string> { { "name", name } };
+                HttpContent content = new FormUrlEncodedContent(groupData);
 
-            HttpContent content = new FormUrlEncodedContent(connectionData);
+                try
+                {
+                    HttpResponseMessage response = httpc.PostAsync("api/groups/", content).Result;
 
-            HttpResponseMessage response = httpc.PostAsync("api/groups/", content).Result;
+                    if (response.IsSuccessStatusCode)
+                    {
+                        List<Group> groups = await new GroupHelper(httpc).GetGroups();
+                        Group group = groups.Find(g => g.Name == name);
 
-            if (response.IsSuccessStatusCode)
-                return true;
+                        var addUserData = new Dictionary<string, string> { { "isAdmin", "true" } };
+                        content = new FormUrlEncodedContent(addUserData);
 
+                        response = httpc.PostAsync(String.Format("api/groups/{0}/users/{1}", group.Id, user.Id), content).Result;
+
+                        if(response.IsSuccessStatusCode)
+                            return true;
+                    }
+
+                    throw new Exception();
+                }
+                catch
+                {
+                    return false;
+                }
+            }
             return false;
         }
-
     }
 }

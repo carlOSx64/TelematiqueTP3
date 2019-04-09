@@ -30,13 +30,13 @@ namespace ClientApp {
         private void RegisterBtn_Click(object sender, RoutedEventArgs e) {
 
             string username = usernameTxtBox.Text;
-            string password = passwordTxtBox.Text;
+            string password = passwordTxtBox.Password;
 
             bool success = Register(username, password);
 
             if(success)
             {
-                MessageBox.Show("Le compte a été créé avec succès", "", MessageBoxButton.OK, MessageBoxImage.Information);
+                MessageBox.Show("Le compte a été crée avec succès", "", MessageBoxButton.OK, MessageBoxImage.Information);
                 this.Close();
             }
             else

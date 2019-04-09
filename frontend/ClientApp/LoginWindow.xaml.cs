@@ -13,6 +13,7 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Shapes;
 using WebApi.Models;
+using System.Web;
 
 namespace ClientApp {
     /// <summary>
@@ -29,7 +30,7 @@ namespace ClientApp {
 
         private async void ConnectionBtn_Click(object sender, RoutedEventArgs e) {
             string username = usernameTxtBox.Text;
-            string password = passwordTxtBox.Text;
+            string password = passwordTxtBox.Password;
 
             User user = await Login(username, password);
 
@@ -37,6 +38,9 @@ namespace ClientApp {
             {
                 MainWindow mainWindow = new MainWindow(httpc, user);
                 mainWindow.ShowDialog();
+
+                if(!Logout(user))
+                    MessageBox.Show("Un problème est survenu lors de la déconnexion", "", MessageBoxButton.OK, MessageBoxImage.Error);
             }
             else
                 MessageBox.Show("La connexion au compte a échoué", "", MessageBoxButton.OK, MessageBoxImage.Error);
@@ -59,6 +63,22 @@ namespace ClientApp {
                 return await response.Content.ReadAsAsync<User>();
             }
             return null;
+        }
+
+        private bool Logout(User user)
+        {
+            try
+            {
+                HttpResponseMessage response = httpc.GetAsync(String.Format("api/users/logout?apiKey={0}", user.ApiKey)).Result;
+                if(response.IsSuccessStatusCode)
+                    return true;
+
+                throw new Exception();
+            }
+            catch(Exception)
+            {
+                return false;
+            }
         }
 
         private void CreateUserBtn_Click(object sender, RoutedEventArgs e) {

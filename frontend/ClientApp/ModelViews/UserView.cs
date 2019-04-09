@@ -8,13 +8,16 @@ namespace ClientApp
 {
     public class UserView
     {
-        public UserView(string username, bool isConnected)
+        public UserView(int id, string username, bool isConnected)
         {
+            Id = id;
             Username = username;
             IsConnected = isConnected;
         }
 
-        public string Username { get; set; }
+        public int Id { get; }
+
+        public string Username { get; }
 
         public bool IsConnected { get; set; }
 

@@ -1,7 +1,9 @@
-﻿using System;
+﻿using ClientApp.Helpers;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
+using System.Net.Http;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
@@ -13,6 +15,7 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
+using WebApi.Models;
 
 namespace ClientApp
 {
@@ -22,20 +25,26 @@ namespace ClientApp
     public partial class MainWindow : Window
     {
         String folderLocation;
-        List<UserView> users;
-        List<Group> groups;
+        List<UserView> userViews;
+        List<Group> groups ;
         List<Notification> notifications;
 
-        public MainWindow()
+        User currentUser;
+
+        HttpClient httpc;
+        UserHelper userHelper;
+
+        public MainWindow(HttpClient httpc, User currentUser)
         {
-            users = GetUsers();
-            groups = GetUserGroups();
+            this.httpc = httpc;
+
+            userHelper = new UserHelper(httpc);
+
+            this.currentUser = currentUser;
 
             InitializeComponent();
 
             notifications = new List<Notification>();
-            InitializeUserListView();
-            InitializeGroupItemControl();
         }
 
         //S'exécute après l'ouverture de la fenêtre
@@ -45,38 +54,6 @@ namespace ClientApp
 
             RequestFolderLocation();
             Update();
-        }
-
-        private List<UserView> GetUsers()
-        {
-            //Code placeholder
-            List<UserView> placeholder = new List<UserView>();
-
-            placeholder.Add(new UserView("JDISMaster", true));
-            placeholder.Add(new UserView("Bessamlol", false));
-            placeholder.Add(new UserView("Carl++", true));
-            placeholder.Add(new UserView("Natrelcul", false));
-            placeholder.Add(new UserView("Info tout nu", false));
-
-            return placeholder;
-        }
-
-        private List<Group> GetUserGroups()
-        {
-            //Code placeholder
-            List<Group> placeholder = new List<Group>();
-
-            List<UserView> users = new List<UserView>();
-            foreach(UserView uv in this.users)
-                users.Add(uv);
-
-            List<UserView> admin = new List<UserView>();
-            admin.Add(this.users.First());
-
-            placeholder.Add(new Group("32", "IFT585", users, admin));
-            placeholder.Add(new Group("33", "JDIS", users, admin));
-
-            return placeholder;
         }
 
         private void RequestFolderLocation()
@@ -105,28 +82,16 @@ namespace ClientApp
             TreatNotifications();
         }
 
-        private void InitializeUserListView()
+        private async void UpdateUsers()
         {
-            //Liaison de usersListView avec users
-            usersListView.ItemsSource = users;
+            usersListView.ItemsSource = await new UserHelper(httpc).GetUserViews();
 
             //Tri pour que les utilisateurs connectés se retrouvent en haut
             CollectionView view = (CollectionView)CollectionViewSource.GetDefaultView(usersListView.ItemsSource);
 			view.SortDescriptions.Add(new SortDescription("IsConnected", ListSortDirection.Descending));
         }
 
-        private void InitializeGroupItemControl()
-        {
-            //Liaison de groupsItemControl avec groups
-            groupsItemControl.ItemsSource = groups;
-        }
-
-        private void UpdateUsers()
-        {
-
-        }
-
-        private void UpdateGroups()
+        private async void UpdateGroups()
         {
 
         }
@@ -135,7 +100,7 @@ namespace ClientApp
         {
             //Code placeholder
             notifications.Add(new Notification("Ceci est une notification"));
-            notifications.Add(new GroupInvitiationNotification(groups.First(), groups.First().Admins.First()));
+            //notifications.Add(new GroupInvitiationNotification(groups.First(), groups.First().Admins.First()));
         }
 
         private void TreatNotifications()
@@ -154,7 +119,7 @@ namespace ClientApp
 
         private void GroupBtn_Click(object sender, RoutedEventArgs e)
         {
-            string id = (string)(sender as Button).Tag;
+            int id = (int)(sender as Button).Tag;
             Group group = groups.Find(g => g.Id == id);
 
             GroupWindow groupWindow = new GroupWindow(group);

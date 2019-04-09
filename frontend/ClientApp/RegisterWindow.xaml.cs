@@ -53,12 +53,19 @@ namespace ClientApp {
 
             HttpContent content = new FormUrlEncodedContent(user);
 
-            HttpResponseMessage response = httpc.PostAsync("api/users/register", content).Result;
+            try
+            {
+                HttpResponseMessage response = httpc.PostAsync("api/users/register", content).Result;
 
-            if(response.IsSuccessStatusCode)
-                return true;
+                if(response.IsSuccessStatusCode)
+                    return true;
 
-            return false;
+                throw new Exception();
+            }
+            catch
+            {
+                return false;
+            }
         }
     }
 }

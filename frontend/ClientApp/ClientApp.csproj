@@ -70,11 +70,12 @@
     <Compile Include="CreateGroupWindow.xaml.cs">
       <DependentUpon>CreateGroupWindow.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Group.cs" />
     <Compile Include="GroupInvitiationNotification.cs" />
     <Compile Include="GroupWindow.xaml.cs">
       <DependentUpon>GroupWindow.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Helpers\GroupHelper.cs" />
+    <Compile Include="Helpers\UserHelper.cs" />
     <Compile Include="Models\ConnectedUser.cs" />
     <Compile Include="Models\File.cs" />
     <Compile Include="Models\FileDto.cs" />
@@ -93,7 +94,7 @@
     <Compile Include="ServerWindow.xaml.cs">
       <DependentUpon>ServerWindow.xaml</DependentUpon>
     </Compile>
-    <Compile Include="UserView.cs" />
+    <Compile Include="ModelViews\UserView.cs" />
     <Page Include="AdminGroupWindow.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>

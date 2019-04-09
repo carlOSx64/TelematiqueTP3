@@ -26,7 +26,7 @@ namespace ClientApp {
             InitializeComponent();
         }
 
-        private async void ConnectionBtn_Click(object sender, RoutedEventArgs e) {
+        private void ConnectionBtn_Click(object sender, RoutedEventArgs e) {
             bool success = true;
 
             string username = usernameTxtBox.Text;
@@ -36,7 +36,7 @@ namespace ClientApp {
 
             if(success)
             {
-                MainWindow mainWindow = new MainWindow();
+                MainWindow mainWindow = new MainWindow(httpc, null);
                 mainWindow.ShowDialog();
             }
             else

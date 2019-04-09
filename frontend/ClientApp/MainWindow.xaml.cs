@@ -227,7 +227,7 @@ namespace ClientApp
 
         private void NewGroupBtn_Click(object sender, RoutedEventArgs e)
         {
-            CreateGroupWindow createGroupWindow = new CreateGroupWindow();
+            CreateGroupWindow createGroupWindow = new CreateGroupWindow(this.httpc);
             createGroupWindow.ShowDialog();
         }
     }

@@ -8,6 +8,7 @@ namespace WebApi.Services
     public interface IGroupService
     {
 
+        Group Get(int groupId);
         List<Group> GetAll();
         List<User> GetUsersByGroup(int groupId);
         Group Create(string name);

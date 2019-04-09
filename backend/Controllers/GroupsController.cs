@@ -32,6 +32,25 @@ namespace WebApi.Controllers
             return Ok(groups);
         }
 
+        // GET api/groups/:id
+        // Anonymous
+        [HttpGet]
+        [Route("{groupId}")]
+        public ActionResult<string> Get(int groupId)
+        {
+            try
+            {
+                GroupDto group = this.ConvertGroupToGroupDto(this.groupService.Get(groupId));
+
+                return Ok(group);
+            }
+            catch
+            {
+                return BadRequest(new { message = "Could not get group: " + groupId });
+            }
+        }
+
+
         // GET api/groups/:id/users
         // Anonymous
         [HttpGet]
@@ -205,7 +224,8 @@ namespace WebApi.Controllers
                 Id = group.Id,
                 Name = group.Name,
                 Members = group.UserGroups.Where(ug => !ug.IsAdmin).Select(ug => ug.UserId).ToList(),
-                Administrators = group.UserGroups.Where(ug => ug.IsAdmin).Select(ug => ug.UserId).ToList()
+                Administrators = group.UserGroups.Where(ug => ug.IsAdmin).Select(ug => ug.UserId).ToList(),
+                Files = group.Files.Where(f => f.GroupId == group.Id).Select(f => f.Id).ToList()
             };
 
             return groupDto;

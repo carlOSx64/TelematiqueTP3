@@ -17,10 +17,21 @@ namespace WebApi.Services
             this.context = sqliteContext;
         }
 
+        public Group Get(int groupId)
+        {
+            Group group = context.Groups
+                .Include(g => g.UserGroups)
+                .Include(g => g.Files)
+                .FirstOrDefault();
+
+            return group;
+        }
+
         public List<Group> GetAll()
         {
             var groups = context.Groups
                 .Include(g => g.UserGroups)
+                .Include(g => g.Files)
                 .ToList();
 
             return groups;
@@ -28,9 +39,9 @@ namespace WebApi.Services
 
         public List<User> GetUsersByGroup(int groupId)
         {
-            var groups = context.Users.Where(u => u.UserGroups.Any(ug => ug.GroupId == groupId)).ToList();
+            var users = context.Users.Where(u => u.UserGroups.Any(ug => ug.GroupId == groupId)).ToList();
 
-            return groups;
+            return users;
         }
 
         public Group Create(string name)

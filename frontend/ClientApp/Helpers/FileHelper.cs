@@ -17,7 +17,7 @@ namespace ClientApp.Helpers
             this.httpc = httpc;
         }
 
-        private async Task<List<File>> GetFileTemplate(string route)
+        private async Task<File> GetFileTemplate(string route)
         {
             try
             {
@@ -25,7 +25,7 @@ namespace ClientApp.Helpers
                 if (response.IsSuccessStatusCode)
                 {
                     File[] file = await response.Content.ReadAsAsync<File[]>();
-                    return new List<File>(file);
+                    return file[0];
                 }
 
                 throw new Exception();
@@ -38,7 +38,12 @@ namespace ClientApp.Helpers
 
         public async Task<List<File>> GetGroupFiles(Group group)
         {
-            return await GetFileTemplate(String.Format("api/group/{0}/files", group.Id));
+            List<File> files = new List<File>();
+            foreach(int id in group.files)
+            {
+                files.Add(await GetFileTemplate(String.Format("api/files/{0}", id)));
+            }
+            return files;
         }
     }
 }

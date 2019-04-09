@@ -70,6 +70,25 @@ namespace ClientApp
             }
         }
 
+        private async void CreateFileByGroup()
+        {
+            string path;
+
+            List<Group> groups = await new GroupHelper(httpc).GetUserGroups(currentUser);
+
+            foreach (Group group in groups)
+            {
+                path = System.IO.Path.Combine(folderLocation, group.Name);
+
+                List<File> files = await new FileHelper(httpc).GetGroupFiles(group);
+
+                foreach (File file in files)
+                {
+                    System.IO.FileStream fstream = System.IO.File.Create(path);
+                }
+            }
+        }
+
         private void RequestFolderLocation()
         {
             MessageBox.Show("Veuillez choisir un emplacement sur votre disque");

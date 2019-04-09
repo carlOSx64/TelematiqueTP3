@@ -16,15 +16,15 @@ namespace ClientApp.Helpers {
             this.httpc = httpc;
         }
 
-        private async Task<List<User>> GetUsersTemplate(string route)
+        private async Task<List<U>> GetUsersTemplate<U>(string route)
         {
             try
             {
                 HttpResponseMessage response = await httpc.GetAsync(route);
                 if (response.IsSuccessStatusCode)
                 {    
-                    User[] users = await response.Content.ReadAsAsync<User[]>();
-                    return new List<User>(users);
+                    U[] users = await response.Content.ReadAsAsync<U[]>();
+                    return new List<U>(users);
                 }
 
                 throw new Exception();
@@ -37,18 +37,18 @@ namespace ClientApp.Helpers {
 
         public async Task<List<User>> GetUsers()
         {
-            return await GetUsersTemplate("api/users");
+            return await GetUsersTemplate<User>("api/users");
         }
 
-        public async Task<List<User>> GetConnectedUsers()
+        public async Task<List<ConnectedUser>> GetConnectedUsers()
         {
-            return await GetUsersTemplate("api/connectedUsers");
+            return await GetUsersTemplate<ConnectedUser>("api/connectedUsers");
         }
 
         public async Task<List<UserView>> GetUserViews()
         {
             List<User> users = await GetUsers();
-            List<User> connectedUsers = await GetConnectedUsers();
+            List<ConnectedUser> connectedUsers = await GetConnectedUsers();
 
             if(users != null && connectedUsers != null)
             {
@@ -56,7 +56,7 @@ namespace ClientApp.Helpers {
                 foreach(User user in users)
                 {
                     bool isConnected = false;
-                    if(connectedUsers.Exists(u => u.Id == user.Id))
+                    if(connectedUsers.Exists(u => u.UserId == user.Id))
                         isConnected = true;
                     userViews.Add(UserToUserView(user, isConnected));
                 }

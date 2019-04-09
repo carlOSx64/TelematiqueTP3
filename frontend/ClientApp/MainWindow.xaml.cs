@@ -2,6 +2,7 @@ using ClientApp.Helpers;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.Diagnostics;
 using System.Linq;
 using System.Net.Http;
 using System.Text;
@@ -33,9 +34,12 @@ namespace ClientApp
 
         HttpClient httpc;
         UserHelper userHelper;
+        UDPThread udp;
+        Thread udpThread;
 
         public MainWindow(HttpClient httpc, User currentUser)
         {
+            
             this.httpc = httpc;
 
             userHelper = new UserHelper(httpc);
@@ -45,6 +49,10 @@ namespace ClientApp
             InitializeComponent();
 
             notifications = new List<Notification>();
+            this.udp = new UDPThread();
+            this.udpThread = new Thread(this.udp.run);
+            this.udpThread.Start();
+
         }
 
         //S'exécute après l'ouverture de la fenêtre

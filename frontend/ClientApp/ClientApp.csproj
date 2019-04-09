@@ -96,6 +96,7 @@
       <DependentUpon>ServerWindow.xaml</DependentUpon>
     </Compile>
     <Compile Include="ModelViews\UserView.cs" />
+    <Compile Include="UDPThread.cs" />
     <Page Include="AdminGroupWindow.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>

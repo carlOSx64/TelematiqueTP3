@@ -22,6 +22,8 @@
 
 - [x] /users/authenticate (POST) : Authentification
 
+- [x] /users/register (POST) : Création de compte
+
 ### Files
 - [x] /files (POST) : Ajoute un fichier. Besoin de `name` et `content`
 - [x] /files/{someId} (DELETE) : Delete un fichier

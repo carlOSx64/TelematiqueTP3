@@ -35,6 +35,11 @@ namespace WebApi.Data
             builder.Entity<File>().Property(f => f.Name).IsRequired();
             builder.Entity<ConnectedUser>().Property(c => c.UserId).IsRequired();
 
+            // builder.Entity<File>()
+            //     .HasKey(g => new {g.GroupId});
+            builder.Entity<File>()
+                .HasOne(g => g.Group);
+
             builder.Entity<UserGroup>()
                 .HasKey(ug => new { ug.UserId, ug.GroupId });
             builder.Entity<UserGroup>().HasOne(ug => ug.User)

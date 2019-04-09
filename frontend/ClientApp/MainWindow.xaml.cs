@@ -1,4 +1,4 @@
-﻿using ClientApp.Helpers;
+using ClientApp.Helpers;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -25,9 +25,8 @@ namespace ClientApp
     public partial class MainWindow : Window
     {
         String folderLocation;
-        List<UserView> userViews;
-        List<Group> groups ;
         List<Notification> notifications;
+        List<Group> groups;
 
         User currentUser;
 
@@ -54,6 +53,21 @@ namespace ClientApp
 
             RequestFolderLocation();
             Update();
+            CreateDirectories();
+        }
+
+        private async void CreateDirectories()
+        {
+            string path;
+
+            List<Group> groups = await new GroupHelper(httpc).GetUserGroups(currentUser);
+
+            foreach(Group group in groups)
+            {
+                path = System.IO.Path.Combine(folderLocation, group.Name);
+
+                System.IO.Directory.CreateDirectory(path);
+            }
         }
 
         private void RequestFolderLocation()
@@ -93,7 +107,9 @@ namespace ClientApp
 
         private async void UpdateGroups()
         {
+            groups = await new GroupHelper(httpc).GetUserGroups(currentUser);
 
+            groupsItemControl.ItemsSource = groups;
         }
 
         private void PullNotifications()

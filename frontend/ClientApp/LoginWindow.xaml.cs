@@ -12,6 +12,7 @@ using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Shapes;
+using WebApi.Models;
 
 namespace ClientApp {
     /// <summary>
@@ -26,21 +27,38 @@ namespace ClientApp {
             InitializeComponent();
         }
 
-        private void ConnectionBtn_Click(object sender, RoutedEventArgs e) {
-            bool success = true;
-
+        private async void ConnectionBtn_Click(object sender, RoutedEventArgs e) {
             string username = usernameTxtBox.Text;
             string password = passwordTxtBox.Text;
 
-            //Connexion...
+            User user = await Login(username, password);
 
-            if(success)
+            if (user != null)
             {
-                MainWindow mainWindow = new MainWindow(httpc, null);
+                MainWindow mainWindow = new MainWindow(httpc, user);
                 mainWindow.ShowDialog();
             }
             else
                 MessageBox.Show("La connexion au compte a échoué", "", MessageBoxButton.OK, MessageBoxImage.Error);
+        }
+
+        private async Task<User> Login(string username, string password)
+        {
+            var connectionData = new Dictionary<string, string>
+            {
+                { "Username", username },
+                { "Password", password }
+            };
+
+            HttpContent content = new FormUrlEncodedContent(connectionData);
+
+            HttpResponseMessage response = httpc.PostAsync("api/users/authenticate", content).Result;
+
+            if (response.IsSuccessStatusCode)
+            {
+                return await response.Content.ReadAsAsync<User>();
+            }
+            return null;
         }
 
         private void CreateUserBtn_Click(object sender, RoutedEventArgs e) {

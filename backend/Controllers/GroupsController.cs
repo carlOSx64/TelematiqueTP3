@@ -27,7 +27,7 @@ namespace WebApi.Controllers
         [HttpGet]
         public ActionResult<string> GetAll()
         {
-            List<GroupDto> groups = this.groupService.GetAll().Select(g => this.ConvertGroupToGroupDto(g)).ToList();
+            List<GroupDto> groups = this.groupService.GetAll().Select(g => UserHelper.ConvertGroupToGroupDto(g)).ToList();
 
             return Ok(groups);
         }
@@ -40,7 +40,7 @@ namespace WebApi.Controllers
         {
             try
             {
-                GroupDto group = this.ConvertGroupToGroupDto(this.groupService.Get(groupId));
+                GroupDto group = UserHelper.ConvertGroupToGroupDto(this.groupService.Get(groupId));
 
                 return Ok(group);
             }
@@ -215,20 +215,6 @@ namespace WebApi.Controllers
             {
                 return BadRequest(new { message = "Could not add user " + userId + " to group " + groupId });
             }
-        }
-
-        private GroupDto ConvertGroupToGroupDto(Group group)
-        {
-            GroupDto groupDto = new GroupDto()
-            {
-                Id = group.Id,
-                Name = group.Name,
-                Members = group.UserGroups.Where(ug => !ug.IsAdmin).Select(ug => ug.UserId).ToList(),
-                Administrators = group.UserGroups.Where(ug => ug.IsAdmin).Select(ug => ug.UserId).ToList(),
-                Files = group.Files.Where(f => f.GroupId == group.Id).Select(f => f.Id).ToList()
-            };
-
-            return groupDto;
         }
 
         private UserDto ConvertUserToUserDto(User user)

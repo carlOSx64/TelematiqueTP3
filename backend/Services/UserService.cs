@@ -39,7 +39,10 @@ namespace WebApi.Services
 
         public List<Group> GetGroupsByUser(int userId)
         {
-            var groups = context.Groups.Where(g => g.UserGroups.Any(ug => ug.UserId == userId)).ToList();
+            var groups = context.Groups
+            .Where(g => g.UserGroups.Any(ug => ug.UserId == userId))
+            .Include(g => g.Files)
+            .ToList();
 
             return groups;
         }

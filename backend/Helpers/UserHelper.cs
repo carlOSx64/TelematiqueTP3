@@ -49,12 +49,14 @@ namespace WebApi.Helpers
             GroupDto groupDto = new GroupDto()
             {
                 Id = group.Id,
-                Name = group.Name
+                Name = group.Name,
+                Members = group.UserGroups.Where(ug => !ug.IsAdmin).Select(ug => ug.UserId).ToList(),
+                Administrators = group.UserGroups.Where(ug => ug.IsAdmin).Select(ug => ug.UserId).ToList(),
+                Files = group.Files.Where(f => f.GroupId == group.Id).Select(f => f.Id).ToList()
             };
 
             return groupDto;
         }
-
         public static InvitationDto ConvertInvitationToInvitationDto(Invitation invitation)
         {
             InvitationDto invitationDto = new InvitationDto()

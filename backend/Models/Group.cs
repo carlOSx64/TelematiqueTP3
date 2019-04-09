@@ -7,6 +7,7 @@ namespace WebApi.Models
         public Group()
         {
             this.UserGroups = new List<UserGroup>();
+            this.Files = new List<File>();
         }
 
         public int Id { get; set; }

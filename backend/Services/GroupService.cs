@@ -39,9 +39,9 @@ namespace WebApi.Services
 
         public List<User> GetUsersByGroup(int groupId)
         {
-            var groups = context.Users.Where(u => u.UserGroups.Any(ug => ug.GroupId == groupId)).ToList();
+            var users = context.Users.Where(u => u.UserGroups.Any(ug => ug.GroupId == groupId)).ToList();
 
-            return groups;
+            return users;
         }
 
         public Group Create(string name)

@@ -12,10 +12,12 @@ namespace ClientApp
     class UDPThread
     {
         Socket socket;
+        MainWindow context;
 
-        public UDPThread()
+        public UDPThread(MainWindow context)
         {
             this.socket = new Socket(SocketType.Dgram, ProtocolType.Udp);
+            this.context = context;
         }
 
         public void run()
@@ -29,6 +31,7 @@ namespace ClientApp
                 this.socket.ReceiveFrom(receiveBytes, ref senderRemote);
                 string returnData = Encoding.UTF8.GetString(receiveBytes).Trim();
                 Debug.WriteLine("This is the message you received " + returnData.ToString());
+                this.context.Update();
                 receiveBytes = new byte[256];
             }
         }

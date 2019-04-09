@@ -49,7 +49,7 @@ namespace ClientApp
             InitializeComponent();
 
             notifications = new List<Notification>();
-            this.udp = new UDPThread();
+            this.udp = new UDPThread(this);
             this.udpThread = new Thread(this.udp.run);
             this.udpThread.Start();
 
@@ -128,7 +128,7 @@ namespace ClientApp
             }
         }
 
-        private void Update()
+        public void Update()
         {
             UpdateUsers();
             UpdateGroups();
@@ -136,23 +136,32 @@ namespace ClientApp
             TreatNotifications();
             CreateDirectories();
             //CreateFileByGroup();
-            updateTimeLabel.Content = "Last update: " + DateTime.Now.ToString();
+            this.Dispatcher.Invoke(() =>
+            {
+                updateTimeLabel.Content = "Last update: " + DateTime.Now.ToString();
+            });
         }
 
         private async void UpdateUsers()
         {
-            usersListView.ItemsSource = await new UserHelper(httpc).GetUserViews();
-
-            //Tri pour que les utilisateurs connectés se retrouvent en haut
-            CollectionView view = (CollectionView)CollectionViewSource.GetDefaultView(usersListView.ItemsSource);
-			view.SortDescriptions.Add(new SortDescription("IsConnected", ListSortDirection.Descending));
+            List<UserView> a = await new UserHelper(httpc).GetUserViews();
+            this.Dispatcher.Invoke(() =>
+            {
+                usersListView.ItemsSource = a;
+                //Tri pour que les utilisateurs connectés se retrouvent en haut
+                CollectionView view = (CollectionView)CollectionViewSource.GetDefaultView(usersListView.ItemsSource);
+                view.SortDescriptions.Add(new SortDescription("IsConnected", ListSortDirection.Descending));
+            });
         }
 
         private async void UpdateGroups()
         {
             groups = await new GroupHelper(httpc).GetUserGroups(currentUser);
-
-            groupsItemControl.ItemsSource = groups;
+            this.Dispatcher.Invoke(() =>
+            {
+                groupsItemControl.ItemsSource = groups;
+            });
+            
         }
 
         private void PullNotifications()

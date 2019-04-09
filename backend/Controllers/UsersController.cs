@@ -34,8 +34,12 @@ namespace WebApi.Controllers
             if (user == null)
                 return BadRequest(new { message = "Username or password is incorrect" });
 
-            // TODO : Validate it works
             var ip = HttpContext.Connection.RemoteIpAddress.ToString();
+
+            // C# handle loopback address as ipv6... we don't want that.
+            if (ip == "::1")
+                ip = "127.0.0.1";
+
             _connectedUserService.Connect(user.Id, ip);
 
             return Ok(new { id = user.Id, username = user.Username, apiKey = user.ApiKey});

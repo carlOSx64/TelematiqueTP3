@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Text;
 using System.Linq;
@@ -36,6 +36,8 @@ namespace WebApi.Services
 
         public File Create(string name, string content, int groupId)
         {
+		
+	     Console.WriteLine("groupId: " + groupId);
 
             File file = new File()
             {

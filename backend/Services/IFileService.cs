@@ -9,5 +9,7 @@ namespace WebApi.Services
     {
         File Create(string name, string content, int groupId);
         void Delete(string id);
+
+        void DeleteAll();
     }
 }

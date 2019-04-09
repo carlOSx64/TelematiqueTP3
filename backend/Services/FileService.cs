@@ -45,5 +45,13 @@ namespace WebApi.Services
             context.SaveChanges();
         }
 
+        public void DeleteAll()
+        {
+            // Truncate table users
+            var allFiles = context.Set<File>();
+            context.Files.RemoveRange(allFiles);
+            context.SaveChanges();
+        }
+
     }
 }

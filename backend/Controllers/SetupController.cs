@@ -16,12 +16,15 @@ namespace WebApi.Controllers
     {
 
         private IUserService _userService;
+        private IFileService _fileService;
         private IGroupService _groupService;
         private IConnectedUserService _connectedUserService;
 
-        public SetupController(IUserService userService, IGroupService groupService, IConnectedUserService connectedUserService)
+        public SetupController(IUserService userService, IGroupService groupService, IConnectedUserService connectedUserService,
+                               IFileService fileService)
         {
             _userService = userService;
+            _fileService = fileService;
             _groupService = groupService;
             _connectedUserService = connectedUserService;
         }
@@ -36,6 +39,7 @@ namespace WebApi.Controllers
             _connectedUserService.DeleteAll();
             _groupService.DeleteAll();
             _userService.DeleteAll();
+            _fileService.DeleteAll();
 
             _userService.Create("user1", "user1");
             _userService.Create("user2", "user2");
@@ -45,6 +49,11 @@ namespace WebApi.Controllers
 
             _groupService.Create("IFT585");
             _groupService.Create("IFT606");
+
+            _fileService.Create("File1.txt", "c2FsdXQgbGEgZ2FuZyBjJ2VzdCBsZSBjb250ZW51IGRlIEZpbGUxLnR4dA==", _groupService.GetAll().First().Id);
+            _fileService.Create("File2.txt", "c2FsdXQgbGEgZ2FuZyBjJ2VzdCBsZSBjb250ZW51IGRlIEZpbGUyLnR4dCBhaGFo", _groupService.GetAll().First().Id);
+
+            _fileService.Create("File3.txt", "ZmlsZTMgYXBwYXJ0aWVudCBhdSAyZSBncm91cGU=", _groupService.GetAll()[1].Id);
 
 
             // TODO : Reset la séquence pour les IDs de toutes les tables, sinon ça crash

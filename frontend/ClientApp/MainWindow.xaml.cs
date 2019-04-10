@@ -219,7 +219,7 @@ namespace ClientApp
             UpdateUsers();
             UpdateGroups();
             CreateDirectories();
-            //CreateFileByGroup();
+            CreateFileByGroup();
             this.Dispatcher.Invoke(() =>
             {
                 updateTimeLabel.Content = "Dernière mise à jour: " + DateTime.Now.ToString();

@@ -120,13 +120,14 @@ namespace WebApi.Services
             context.SaveChanges();
         }
 
-        public void UpdateInvitation(int userId, int groupId, InvitationStatus status)
+        public Invitation UpdateInvitation(int userId, int groupId, InvitationStatus status)
         {
             Invitation currentInvitation = context.Invitations.First(i => i.UserId == userId && i.GroupId == groupId);
             if (currentInvitation != null)
             {
                 currentInvitation.Status = status;
                 context.SaveChanges();
+                return currentInvitation;
             }
             else
             {

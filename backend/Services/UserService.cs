@@ -41,6 +41,7 @@ namespace WebApi.Services
         {
             var groups = context.Groups
             .Where(g => g.UserGroups.Any(ug => ug.UserId == userId))
+            .Include(g => g.UserGroups)
             .Include(g => g.Files)
             .ToList();
 
@@ -49,7 +50,11 @@ namespace WebApi.Services
 
         public List<Invitation> GetInvitationsByUser(int userId)
         {
-            var invitations = context.Invitations.Where(i => i.UserId == userId).ToList();
+            var invitations = context.Invitations
+                .Where(i => i.UserId == userId)
+                .Include(i => i.InvitedBy)
+                .Include(i => i.Group)
+                .ToList();
 
             return invitations;
         }

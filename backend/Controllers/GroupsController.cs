@@ -167,8 +167,13 @@ namespace WebApi.Controllers
         // POST api/groups/:groupId/invitations/:userId
         // Anonymous
         [HttpPost("{groupId}/invitations/{userId}")]
-        public ActionResult<string> InviteUser(int groupId, int userId, [FromForm]bool isAdmin)
+        public ActionResult<string> InviteUser(int groupId, int userId, [FromForm]string apiKey, [FromForm]bool isAdmin)
         {
+            if (!UserHelper.ValidateApiKey(apiKey, this.userService))
+            {
+                return BadRequest(new { message = "Invalid API key" });
+            }
+
             if (!this.groupService.Exists(groupId))
             {
                 return BadRequest(new { message = "Invalid group id" });
@@ -181,7 +186,8 @@ namespace WebApi.Controllers
 
             try
             {
-                this.groupService.InviteUser(userId, groupId, isAdmin, 1); // TODO: Add current user id
+                var invitedById = UserHelper.GetUserByApiKey(apiKey, this.userService);
+                this.groupService.InviteUser(userId, groupId, isAdmin, invitedById);
                 return Ok(new { message = "User invited" });
             }
             catch
@@ -208,7 +214,12 @@ namespace WebApi.Controllers
 
             try
             {
-                this.groupService.UpdateInvitation(userId, groupId, status);
+                Invitation invitation = this.groupService.UpdateInvitation(userId, groupId, status);
+                if (status == InvitationStatus.Accepted)
+                {
+
+                    this.groupService.AddUserToGroup(userId, groupId, invitation.IsAdmin);
+                }
                 return Ok(new { message = "Invitation updated" });
             }
             catch

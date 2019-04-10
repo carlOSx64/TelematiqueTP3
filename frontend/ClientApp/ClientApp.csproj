@@ -77,6 +77,7 @@
     <Compile Include="Helpers\FileHelper.cs" />
     <Compile Include="Helpers\GroupHelper.cs" />
     <Compile Include="Helpers\UserHelper.cs" />
+    <Compile Include="Helpers\FileHelper.cs" />
     <Compile Include="Models\ConnectedUser.cs" />
     <Compile Include="Models\File.cs" />
     <Compile Include="Models\FileDto.cs" />

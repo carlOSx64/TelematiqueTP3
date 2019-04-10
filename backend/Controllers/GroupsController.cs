@@ -214,7 +214,12 @@ namespace WebApi.Controllers
 
             try
             {
-                this.groupService.UpdateInvitation(userId, groupId, status);
+                Invitation invitation = this.groupService.UpdateInvitation(userId, groupId, status);
+                if (status == InvitationStatus.Accepted)
+                {
+
+                    this.groupService.AddUserToGroup(userId, groupId, invitation.IsAdmin);
+                }
                 return Ok(new { message = "Invitation updated" });
             }
             catch

@@ -78,7 +78,6 @@
     <Compile Include="Helpers\GroupHelper.cs" />
     <Compile Include="Helpers\InvitationHelper.cs" />
     <Compile Include="Helpers\UserHelper.cs" />
-    <Compile Include="Helpers\FileHelper.cs" />
     <Compile Include="InvitationWindow.xaml.cs">
       <DependentUpon>InvitationWindow.xaml</DependentUpon>
     </Compile>

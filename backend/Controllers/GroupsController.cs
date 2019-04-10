@@ -27,10 +27,29 @@ namespace WebApi.Controllers
         [HttpGet]
         public ActionResult<string> GetAll()
         {
-            List<GroupDto> groups = this.groupService.GetAll().Select(g => this.ConvertGroupToGroupDto(g)).ToList();
+            List<GroupDto> groups = this.groupService.GetAll().Select(g => UserHelper.ConvertGroupToGroupDto(g)).ToList();
 
             return Ok(groups);
         }
+
+        // GET api/groups/:id
+        // Anonymous
+        [HttpGet]
+        [Route("{groupId}")]
+        public ActionResult<string> Get(int groupId)
+        {
+            try
+            {
+                GroupDto group = UserHelper.ConvertGroupToGroupDto(this.groupService.Get(groupId));
+
+                return Ok(group);
+            }
+            catch
+            {
+                return BadRequest(new { message = "Could not get group: " + groupId });
+            }
+        }
+
 
         // GET api/groups/:id/users
         // Anonymous
@@ -148,8 +167,13 @@ namespace WebApi.Controllers
         // POST api/groups/:groupId/invitations/:userId
         // Anonymous
         [HttpPost("{groupId}/invitations/{userId}")]
-        public ActionResult<string> InviteUser(int groupId, int userId, [FromForm]bool isAdmin)
+        public ActionResult<string> InviteUser(int groupId, int userId, [FromForm]string apiKey, [FromForm]bool isAdmin)
         {
+            if (!UserHelper.ValidateApiKey(apiKey, this.userService))
+            {
+                return BadRequest(new { message = "Invalid API key" });
+            }
+
             if (!this.groupService.Exists(groupId))
             {
                 return BadRequest(new { message = "Invalid group id" });
@@ -162,7 +186,8 @@ namespace WebApi.Controllers
 
             try
             {
-                this.groupService.InviteUser(userId, groupId, isAdmin, 1); // TODO: Add current user id
+                var invitedById = UserHelper.GetUserByApiKey(apiKey, this.userService);
+                this.groupService.InviteUser(userId, groupId, isAdmin, invitedById);
                 return Ok(new { message = "User invited" });
             }
             catch
@@ -196,19 +221,6 @@ namespace WebApi.Controllers
             {
                 return BadRequest(new { message = "Could not add user " + userId + " to group " + groupId });
             }
-        }
-
-        private GroupDto ConvertGroupToGroupDto(Group group)
-        {
-            GroupDto groupDto = new GroupDto()
-            {
-                Id = group.Id,
-                Name = group.Name,
-                Members = group.UserGroups.Where(ug => !ug.IsAdmin).Select(ug => ug.UserId).ToList(),
-                Administrators = group.UserGroups.Where(ug => ug.IsAdmin).Select(ug => ug.UserId).ToList()
-            };
-
-            return groupDto;
         }
 
         private UserDto ConvertUserToUserDto(User user)

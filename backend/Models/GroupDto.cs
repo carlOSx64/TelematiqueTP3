@@ -14,5 +14,6 @@ namespace WebApi.Models
         public string Name { get; set; }
         public ICollection<int> Members { get; set; }
         public ICollection<int> Administrators { get; set; }
+        public ICollection<int> Files { get; set; }
     }
 }

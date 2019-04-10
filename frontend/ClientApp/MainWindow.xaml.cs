@@ -2,6 +2,7 @@ using ClientApp.Helpers;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.Diagnostics;
 using System.Linq;
 using System.Net.Http;
 using System.Text;
@@ -33,9 +34,12 @@ namespace ClientApp
 
         HttpClient httpc;
         UserHelper userHelper;
+        UDPThread udp;
+        Thread udpThread;
 
         public MainWindow(HttpClient httpc, User currentUser)
         {
+            
             this.httpc = httpc;
 
             userHelper = new UserHelper(httpc);
@@ -45,6 +49,10 @@ namespace ClientApp
             InitializeComponent();
 
             notifications = new List<Notification>();
+            this.udp = new UDPThread(this);
+            this.udpThread = new Thread(this.udp.run);
+            this.udpThread.Start();
+
         }
 
         //S'exécute après l'ouverture de la fenêtre
@@ -88,15 +96,102 @@ namespace ClientApp
 
             List<Group> groups = await new GroupHelper(httpc).GetUserGroups(currentUser);
 
+           
+
+            foreach (Group group in groups)
+            {
+                
+                List<File> files = new List<File>();
+                
+
+                files = await new FileHelper(httpc).GetGroupFiles(group);
+                path = System.IO.Path.Combine(folderLocation, group.Name);
+                System.IO.DirectoryInfo di = new System.IO.DirectoryInfo(path);
+                System.IO.FileInfo[] localFiles = di.GetFiles("*");
+                List<string> localfileNames = new List<string>();
+                List<string> remotefileNames = new List<string>();
+                foreach (File f in files)
+                {
+                    remotefileNames.Add(f.Name);
+                }
+                foreach(System.IO.FileInfo fi in localFiles)
+                {
+                    localfileNames.Add(fi.Name);
+                }
+                //Verication si on a des nouveua file local
+                foreach (System.IO.FileInfo file in localFiles)
+                {
+                    if (!remotefileNames.Contains(file.Name))
+                    {
+                        System.IO.FileStream fs = file.OpenRead();
+                        byte[] fileContent;
+                        using (System.IO.BinaryReader sr = new System.IO.BinaryReader(fs))
+                        {
+                            long numByte = file.Length;
+                            fileContent = sr.ReadBytes((int)numByte);
+                        }
+
+                        await new FileHelper(httpc).CreateFile(file.Name, fileContent, group.Id);
+                        fs.Close();
+                    }
+                }
+
+                //Delete 
+               /* List<File> filesToDelete = new List<File>();
+                foreach (File file in files)
+                {
+                    if (!localfileNames.Contains(file.Name))
+                    {
+                        filesToDelete.Add(file);
+                    }
+                }
+
+                foreach(File fileToDelete in filesToDelete)
+                {
+                    await new FileHelper(httpc).DeleteFile(fileToDelete.Id);
+                }*/
+
+
+            }
+
+            groups = await new GroupHelper(httpc).GetUserGroups(currentUser);
+
             foreach (Group group in groups)
             {
                 path = System.IO.Path.Combine(folderLocation, group.Name);
+                System.IO.DirectoryInfo di = new System.IO.DirectoryInfo(path);
+                System.IO.FileInfo[] localFiles = di.GetFiles("*");
+                List<string> localfileNames = new List<string>();
+                foreach (System.IO.FileInfo fi in localFiles)
+                {
+                    fi.Delete();
+                }
+
+                path = System.IO.Path.Combine(folderLocation, group.Name);
 
                 List<File> files = await new FileHelper(httpc).GetGroupFiles(group);
-
+                Debug.WriteLine("Salut la gang");
                 foreach (File file in files)
                 {
-                    System.IO.FileStream fstream = System.IO.File.Create(path);
+                    string filePath = System.IO.Path.Combine(path, file.Name);
+                    Debug.WriteLine("Salut la gang 22222");
+                    Debug.WriteLine(filePath);
+
+               
+
+                    try
+                    {
+                        System.IO.FileStream fstream = System.IO.File.Create(filePath);
+                        byte[] data = System.Convert.FromBase64String(file.Content);
+
+                        fstream.Write(data, 0, data.Length);
+
+                        fstream.Close();
+                    }
+                    catch { }
+                    
+
+                    
                     //TODO write file.data dans le fstream
                 }
             }
@@ -120,31 +215,40 @@ namespace ClientApp
             }
         }
 
-        private void Update()
+        public void Update()
         {
             UpdateUsers();
             UpdateGroups();
             PullNotifications();
             TreatNotifications();
             CreateDirectories();
-            //CreateFileByGroup();
-            updateTimeLabel.Content = "Last update: " + DateTime.Now.ToString();
+            CreateFileByGroup();
+            this.Dispatcher.Invoke(() =>
+            {
+                updateTimeLabel.Content = "Last update: " + DateTime.Now.ToString();
+            });
         }
 
         private async void UpdateUsers()
         {
-            usersListView.ItemsSource = await new UserHelper(httpc).GetUserViews();
-
-            //Tri pour que les utilisateurs connectés se retrouvent en haut
-            CollectionView view = (CollectionView)CollectionViewSource.GetDefaultView(usersListView.ItemsSource);
-			view.SortDescriptions.Add(new SortDescription("IsConnected", ListSortDirection.Descending));
+            List<UserView> a = await new UserHelper(httpc).GetUserViews();
+            this.Dispatcher.Invoke(() =>
+            {
+                usersListView.ItemsSource = a;
+                //Tri pour que les utilisateurs connectés se retrouvent en haut
+                CollectionView view = (CollectionView)CollectionViewSource.GetDefaultView(usersListView.ItemsSource);
+                view.SortDescriptions.Add(new SortDescription("IsConnected", ListSortDirection.Descending));
+            });
         }
 
         private async void UpdateGroups()
         {
             groups = await new GroupHelper(httpc).GetUserGroups(currentUser);
-
-            groupsItemControl.ItemsSource = groups;
+            this.Dispatcher.Invoke(() =>
+            {
+                groupsItemControl.ItemsSource = groups;
+            });
+            
         }
 
         private void PullNotifications()

@@ -39,14 +39,22 @@ namespace WebApi.Services
 
         public List<Group> GetGroupsByUser(int userId)
         {
-            var groups = context.Groups.Where(g => g.UserGroups.Any(ug => ug.UserId == userId)).ToList();
+            var groups = context.Groups
+            .Where(g => g.UserGroups.Any(ug => ug.UserId == userId))
+            .Include(g => g.UserGroups)
+            .Include(g => g.Files)
+            .ToList();
 
             return groups;
         }
 
         public List<Invitation> GetInvitationsByUser(int userId)
         {
-            var invitations = context.Invitations.Where(i => i.UserId == userId).ToList();
+            var invitations = context.Invitations
+                .Where(i => i.UserId == userId)
+                .Include(i => i.InvitedBy)
+                .Include(i => i.Group)
+                .ToList();
 
             return invitations;
         }

@@ -76,8 +76,12 @@
     </Compile>
     <Compile Include="Helpers\FileHelper.cs" />
     <Compile Include="Helpers\GroupHelper.cs" />
+    <Compile Include="Helpers\InvitationHelper.cs" />
     <Compile Include="Helpers\UserHelper.cs" />
     <Compile Include="Helpers\FileHelper.cs" />
+    <Compile Include="InvitationWindow.xaml.cs">
+      <DependentUpon>InvitationWindow.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Models\ConnectedUser.cs" />
     <Compile Include="Models\File.cs" />
     <Compile Include="Models\FileDto.cs" />
@@ -107,6 +111,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="GroupWindow.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="InvitationWindow.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

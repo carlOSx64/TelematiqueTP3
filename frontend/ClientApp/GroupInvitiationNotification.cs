@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net.Http;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
@@ -10,21 +11,57 @@ namespace ClientApp
 {
     class GroupInvitiationNotification : Notification
     {
-        public GroupInvitiationNotification(Group group, UserView admin) : base("{0} vous invite à rejoindre le groupe {1}")
+        HttpClient httpc;
+
+        int groupId;
+
+        User user;
+
+        int adminId;
+
+        public GroupInvitiationNotification(HttpClient httpc, int groupId, User user, int adminId) : base("{0} vous invite à rejoindre le groupe {1}")
         {
-            Group = group;
-            Admin = admin;
+            this.httpc = httpc;
+            this.groupId = groupId;
+            this.user = user;
+            this.adminId = adminId;
         }
-
-        private Group Group { get; }
-
-        private UserView Admin { get; }
 
         override public void Trigger()
         {
-            MessageBoxResult result = MessageBox.Show(String.Format(Message, Admin.Username, Group.Name), "", MessageBoxButton.YesNo);
+            MessageBoxResult result = MessageBox.Show(String.Format(Message, adminId, groupId), "", MessageBoxButton.YesNo);
 
-            // Traiter result... passer des références dans le constructeur au besoin
+            InvitationStatus status;
+            if(result == MessageBoxResult.Yes)
+                status = InvitationStatus.Accepted;
+            else
+                status = InvitationStatus.Rejected;
+
+            Respond(status);
+        }
+
+        public void Respond(InvitationStatus status)
+        {
+            var statusData = new Dictionary<string, string>
+            {
+                { "status", status.ToString() }
+            };
+
+            HttpContent content = new FormUrlEncodedContent(statusData);
+
+            try
+            {
+                HttpResponseMessage response = httpc.PutAsync(String.Format("api/groups/{0}/invitations/{1}", groupId, user.Id), content).Result;
+
+                if(response.IsSuccessStatusCode)
+                    return;
+
+                throw new Exception();
+            }
+            catch
+            {
+                return;
+            }
         }
     }
 }

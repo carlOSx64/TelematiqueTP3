@@ -67,8 +67,6 @@ namespace ClientApp
             RunPeriodicAsync(Update, dueTime, interval, CancellationToken.None);
             Update();
         }
-
-
         
         //Poour tester le timer
         private void TestTimer()
@@ -217,24 +215,23 @@ namespace ClientApp
 
         public void Update()
         {
+            TreatNotifications();
             UpdateUsers();
             UpdateGroups();
-            PullNotifications();
-            TreatNotifications();
             CreateDirectories();
-            CreateFileByGroup();
+            //CreateFileByGroup();
             this.Dispatcher.Invoke(() =>
             {
-                updateTimeLabel.Content = "Last update: " + DateTime.Now.ToString();
+                updateTimeLabel.Content = "Dernière mise à jour: " + DateTime.Now.ToString();
             });
         }
 
         private async void UpdateUsers()
         {
-            List<UserView> a = await new UserHelper(httpc).GetUserViews();
+            List<UserView> users = await new UserHelper(httpc).GetUserViews();
             this.Dispatcher.Invoke(() =>
             {
-                usersListView.ItemsSource = a;
+                usersListView.ItemsSource = users;
                 //Tri pour que les utilisateurs connectés se retrouvent en haut
                 CollectionView view = (CollectionView)CollectionViewSource.GetDefaultView(usersListView.ItemsSource);
                 view.SortDescriptions.Add(new SortDescription("IsConnected", ListSortDirection.Descending));
@@ -251,15 +248,10 @@ namespace ClientApp
             
         }
 
-        private void PullNotifications()
+        private async void TreatNotifications()
         {
-            //Code placeholder
-            //notifications.Add(new Notification("Ceci est une notification"));
-            //notifications.Add(new GroupInvitiationNotification(groups.First(), groups.First().Admins.First()));
-        }
+            List<Notification> notifications = await new InvitationHelper(httpc).GetUserGroupInvitiationNotifications(currentUser);
 
-        private void TreatNotifications()
-        {
             foreach(Notification notification in notifications)
             {
                 notification.Trigger();
@@ -300,7 +292,7 @@ namespace ClientApp
             int id = (int)(sender as Button).Tag;
             Group group = groups.Find(g => g.Id == id);
 
-            GroupWindow groupWindow = new GroupWindow(group);
+            GroupWindow groupWindow = new GroupWindow(httpc, group, currentUser);
             groupWindow.ShowDialog();
         }
 
